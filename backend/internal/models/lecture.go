@@ -1,6 +1,7 @@
 package models
 
 import (
+	"backend/internal/utils/error_utils"
 	"time"
 
 	"github.com/asaskevich/govalidator"
@@ -17,11 +18,11 @@ type Lecture struct {
 	Role string `gorm:"type:ENUM('Dosen', 'Mahasiswa');not null" json:"role" form:"role" valid:"required~Status tidak boleh kosong"`
 }
 
-func (lecture *Lecture) Validate() error {
+func (lecture *Lecture) Validate() error_utils.ErrorMessage {
 	_, err := govalidator.ValidateStruct(lecture)
 
 	if err != nil {
-		return err
+		return error_utils.BadRequest(err.Error())
 	}
 
 	return nil
