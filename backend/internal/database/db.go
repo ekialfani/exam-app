@@ -37,7 +37,7 @@ func StartDB() {
 
 	fmt.Println("berhasil terhubung ke database...")
 
-	db.Debug().AutoMigrate(models.Lecture{})
+	db.Debug().AutoMigrate(models.Lecturer{})
 }
 
 func GetDB() *gorm.DB {
