@@ -4,13 +4,14 @@ import (
 	"backend/internal/models"
 	"backend/internal/services"
 	"backend/internal/utils/error_utils"
+	"backend/internal/utils/header_value_utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func LecturerRegister(context *gin.Context) {
-	contentType := context.Request.Header.Get("Content-Type")
+	contentType := header_value_utils.GetContentType(context)
 	var lecturerRequest = models.Lecturer{}
 
 	if contentType == "application/json" {
@@ -38,7 +39,7 @@ func LecturerRegister(context *gin.Context) {
 }
 
 func LecturerLogin(context *gin.Context) {
-	contentType := context.Request.Header.Get("Content-Type")
+	contentType := header_value_utils.GetContentType(context)
 	var lecturerRequest = models.Lecturer{}
 
 	if contentType == "application/json" {
