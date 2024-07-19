@@ -9,6 +9,7 @@ import (
 
 type lecturerDomainRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
+	Login(*models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage)
 }
 
 type lecturerDomain struct {}
@@ -34,6 +35,18 @@ func (lecturer *lecturerDomain) Register(lecturerRequest *models.Lecturer) (*mod
 	}
 
 	return lecturerResponse, nil
+}
+
+func (lecturer *lecturerDomain) Login(LecturerRequest *models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage) {
+	db := database.GetDB()
+
+	err := db.Debug().Where("email = ?", LecturerRequest.Email).Take(&LecturerRequest).Error
+
+	if err != nil {
+		return nil, error_utils.Unauthorized("Email/Password salah")
+	}
+
+	return LecturerRequest, nil
 }
 
 var LecturerRepository lecturerDomainRepo = &lecturerDomain{}

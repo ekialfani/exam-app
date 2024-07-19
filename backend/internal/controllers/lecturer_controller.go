@@ -36,3 +36,33 @@ func LecturerRegister(context *gin.Context) {
 
 	context.JSON(http.StatusCreated, lecturerResponse)
 }
+
+func LecturerLogin(context *gin.Context) {
+	contentType := context.Request.Header.Get("Content-Type")
+	var lecturerRequest = models.Lecturer{}
+
+	if contentType == "application/json" {
+		if err := context.ShouldBindJSON(&lecturerRequest); err != nil {
+			errMessage := error_utils.UnprocessableEntity(err.Error())
+			context.JSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+	} else {
+		if err := context.ShouldBind(&lecturerRequest); err != nil {
+			errMessage := error_utils.UnprocessableEntity(err.Error())
+			context.JSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+	}
+
+	token, err := services.LecturerService.Login(&lecturerRequest)
+
+	if err != nil {
+		context.JSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"token": token,
+	})
+}

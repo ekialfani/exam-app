@@ -57,3 +57,11 @@ func UnprocessableEntity(message string) ErrorMessage {
 		ErrStatus: "Invalid Request",
 	}
 }
+
+func Unauthorized(message string) ErrorMessage {
+	return &ErrorMessageData{
+		ErrMessage: message,
+		ErrStatusCode: http.StatusUnauthorized,
+		ErrStatus: "Unauthorized",
+	}
+}
