@@ -6,7 +6,7 @@ import (
 )
 
 func ParseError(err error) error_utils.ErrorMessage {
-	if strings.Contains(err.Error(), "no rows in result set") {
+	if strings.Contains(err.Error(), "record not found") {
 		return error_utils.NotFound("data tidak ditemukan")
 	}
 

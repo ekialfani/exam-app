@@ -5,17 +5,18 @@ import (
 	"backend/internal/repository"
 	"backend/internal/utils/bcrypt_utils"
 	"backend/internal/utils/error_utils"
-	"backend/internal/utils/generate_token_utils"
+	"backend/internal/utils/token_utils"
 )
 
 type lecturerServiceRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
 	Login(*models.Lecturer) (string, error_utils.ErrorMessage)
+	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
 }
 
 type lecturerService struct{}
 
-func (lecturer *lecturerService) Register(lecturerRequest *models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage) {
+func (ls *lecturerService) Register(lecturerRequest *models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage) {
 	err := lecturerRequest.Validate()
 
 	if err != nil {
@@ -33,8 +34,8 @@ func (lecturer *lecturerService) Register(lecturerRequest *models.Lecturer) (*mo
 	return lecturerResponse, nil
 }
 
-func (lecturer *lecturerService) Login(lecturerRequest *models.Lecturer) (string, error_utils.ErrorMessage) {
-	var password string
+func (ls *lecturerService) Login(lecturerRequest *models.Lecturer) (string, error_utils.ErrorMessage) {
+	var password string = ""
 	password = lecturerRequest.Password
 
 	lecturerResponse, err := repository.LecturerRepository.Login(lecturerRequest)
@@ -49,9 +50,26 @@ func (lecturer *lecturerService) Login(lecturerRequest *models.Lecturer) (string
 		return "", error_utils.Unauthorized("Email/password salah")
 	}
 
-	token := generate_token_utils.GenerateToken(lecturerResponse.ID, lecturerResponse.Email, lecturerResponse.Role)
+	token := token_utils.GenerateToken(lecturerResponse.ID, lecturerResponse.Email, lecturerResponse.Role)
 
 	return token, nil
+}
+
+func (ls *lecturerService) UpdateLecturer(updatedLecturer *models.LecturerUpdate, lecturerId uint) (*models.LecturerResponse, error_utils.ErrorMessage) {
+	err := updatedLecturer.Validate()
+
+	if err != nil {
+		return nil, err
+	}
+
+
+	lecturerResponse, err := repository.LecturerRepository.UpdateLecturer(updatedLecturer, lecturerId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return lecturerResponse, nil
 }
 
 var LecturerService lecturerServiceRepo = &lecturerService{}

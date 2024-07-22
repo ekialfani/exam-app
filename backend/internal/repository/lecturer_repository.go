@@ -10,11 +10,12 @@ import (
 type lecturerDomainRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
 	Login(*models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage)
+	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
 }
 
 type lecturerDomain struct {}
 
-func (lecturer *lecturerDomain) Register(lecturerRequest *models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage) {
+func (ld *lecturerDomain) Register(lecturerRequest *models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage) {
 	db := database.GetDB()
 
 	err := db.Debug().Create(&lecturerRequest).Error
@@ -32,12 +33,13 @@ func (lecturer *lecturerDomain) Register(lecturerRequest *models.Lecturer) (*mod
 		Email: lecturerRequest.Email,
 		Role: lecturerRequest.Role,
 		CreatedAt: lecturerRequest.CreatedAt,
+		UpdatedAt: lecturerRequest.UpdatedAt,
 	}
 
 	return lecturerResponse, nil
 }
 
-func (lecturer *lecturerDomain) Login(LecturerRequest *models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage) {
+func (ld *lecturerDomain) Login(LecturerRequest *models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage) {
 	db := database.GetDB()
 
 	err := db.Debug().Where("email = ?", LecturerRequest.Email).Take(&LecturerRequest).Error
@@ -47,6 +49,37 @@ func (lecturer *lecturerDomain) Login(LecturerRequest *models.Lecturer) (*models
 	}
 
 	return LecturerRequest, nil
+}
+
+func (ld *lecturerDomain) UpdateLecturer(updatedLecturer *models.LecturerUpdate, lecturerId uint) (*models.LecturerResponse, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var lecturer = models.Lecturer{}
+
+	err := db.First(&lecturer, lecturerId).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	err = db.Model(&lecturer).Updates(updatedLecturer).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	var lecturerResponse = &models.LecturerResponse{
+		ID: lecturer.ID,
+		FullName: lecturer.FullName,
+		Nip: lecturer.Nip,
+		DateOfBirth: lecturer.DateOfBirth,
+		Gender: lecturer.Gender,
+		Email: lecturer.Email,
+		Role: lecturer.Role,
+		CreatedAt: lecturer.CreatedAt,
+		UpdatedAt: lecturer.UpdatedAt,
+	}
+
+	return lecturerResponse, nil
 }
 
 var LecturerRepository lecturerDomainRepo = &lecturerDomain{}

@@ -18,8 +18,8 @@ type Lecturer struct {
 	Role string `gorm:"type:ENUM('Dosen', 'Mahasiswa');not null" json:"role" form:"role" valid:"required~Status tidak boleh kosong"`
 }
 
-func (lecturer *Lecturer) Validate() error_utils.ErrorMessage {
-	_, err := govalidator.ValidateStruct(lecturer)
+func (l *Lecturer) Validate() error_utils.ErrorMessage {
+	_, err := govalidator.ValidateStruct(l)
 
 	if err != nil {
 		return error_utils.BadRequest(err.Error())
@@ -37,4 +37,24 @@ type LecturerResponse struct {
 	Email string `json:"email"`
 	Role string `json:"role"`
 	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+type LecturerUpdate struct {
+	FullName     string `gorm:"type:varchar(200);not null" json:"full_name" form:"full_name" valid:"required~Nama panjang tidak boleh kosong"`
+	Nip          string `gorm:"type:varchar(200);not null;unique;" json:"nip" form:"nip" valid:"required~NIP wajib untuk disi"`
+	DateOfBirth string `gorm:"type:date;not null" json:"date_of_birth" form:"date_of_birth" valid:"required~Tanggal lahir tidak boleh kosong"`
+	Gender string `gorm:"type:ENUM('Laki-Laki', 'Perempuan');not null" json:"gender" form:"gender" valid:"required~Jenis kelamin tidak boleh kosong"`
+	Email string `gorm:"type:varchar(200);not null;uniqueIndex" json:"email" form:"email" valid:"required~Email tidak boleh kosong, email~Format email salah"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+}
+
+func (lu *LecturerUpdate) Validate() error_utils.ErrorMessage {
+	_, err := govalidator.ValidateStruct(lu)
+
+	if err != nil {
+		return error_utils.BadRequest(err.Error())
+	}
+
+	return nil
 }
