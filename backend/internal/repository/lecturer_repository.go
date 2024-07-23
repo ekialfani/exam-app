@@ -11,6 +11,7 @@ type lecturerDomainRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
 	Login(*models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage)
 	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
+	DeleteLecturer(uint) (string, error_utils.ErrorMessage)
 }
 
 type lecturerDomain struct {}
@@ -80,6 +81,22 @@ func (ld *lecturerDomain) UpdateLecturer(updatedLecturer *models.LecturerUpdate,
 	}
 
 	return lecturerResponse, nil
+}
+
+func (ld *lecturerDomain) DeleteLecturer(lecturerId uint) (string, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var message string
+	var lecturer = models.Lecturer{}
+
+	err := db.Where("id = ?", lecturerId).Delete(&lecturer).Error
+
+	if err != nil {
+		message = ""
+		return message, error_formats.ParseError(err)
+	}
+
+	message = "Akun berhasil dihapus"
+	return message, nil
 }
 
 var LecturerRepository lecturerDomainRepo = &lecturerDomain{}

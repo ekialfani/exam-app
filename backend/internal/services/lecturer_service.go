@@ -12,6 +12,7 @@ type lecturerServiceRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
 	Login(*models.Lecturer) (string, error_utils.ErrorMessage)
 	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
+	DeleteLecturer(uint) (string, error_utils.ErrorMessage)
 }
 
 type lecturerService struct{}
@@ -70,6 +71,16 @@ func (ls *lecturerService) UpdateLecturer(updatedLecturer *models.LecturerUpdate
 	}
 
 	return lecturerResponse, nil
+}
+
+func (ls *lecturerService) DeleteLecturer(lecturerId uint) (string, error_utils.ErrorMessage) {
+	message, err := repository.LecturerRepository.DeleteLecturer(lecturerId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return message, nil
 }
 
 var LecturerService lecturerServiceRepo = &lecturerService{}
