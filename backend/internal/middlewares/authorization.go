@@ -45,3 +45,18 @@ func LecturerAuthorization() gin.HandlerFunc {
 		context.Next()
 	}
 }
+
+func AdminAuthorization() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		userData := context.MustGet("userData").(jwt.MapClaims)
+		var role string = userData["role"].(string)
+
+		if role != "Dosen" {
+			err := error_utils.Unauthorized("Tidak dapat mengakses data. Silahkan masuk sebagai dosen terlebih dahulu")
+			context.AbortWithStatusJSON(err.StatusCode(), err)
+			return
+		}
+
+		context.Next()
+	}
+}

@@ -5,8 +5,10 @@ import (
 	"backend/internal/utils/header_value_utils"
 	"errors"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -63,4 +65,16 @@ func VerifyToken(context *gin.Context) (interface{}, error_utils.ErrorMessage) {
 	}
 
 	return token.Claims.(jwt.MapClaims), nil
+}
+
+func GenerateExamToken(tokenLength int) string {
+	var randomizer = rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
+	var letters = []rune("abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	token := make([]rune, tokenLength)
+
+	for index := range token {
+		token[index] = letters[randomizer.Intn(len(letters))]
+	}
+
+	return string(token)
 }

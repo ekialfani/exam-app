@@ -16,6 +16,7 @@ type Lecturer struct {
 	Email string `gorm:"type:varchar(200);not null;uniqueIndex" json:"email" form:"email" valid:"required~Email tidak boleh kosong, email~Format email salah"`
 	Password string `gorm:"type:varchar(200);not null" json:"password" form:"password" valid:"required~Password wajib tidak boleh kosong, minstringlength(6)~Password harus lebih dari 6 karakter"`
 	Role string `gorm:"type:ENUM('Dosen', 'Mahasiswa');not null" json:"role" form:"role" valid:"required~Status tidak boleh kosong"`
+	Exams []Exam
 }
 
 func (l *Lecturer) Validate() error_utils.ErrorMessage {
