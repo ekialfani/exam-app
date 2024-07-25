@@ -9,11 +9,12 @@ import (
 
 type examServiceRepo interface {
 	CreateExam(*models.Exam, uint) (*models.Exam, error_utils.ErrorMessage)
+	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 }
 
 type examService struct {}
 
-func (e *examService) CreateExam(examRequest *models.Exam, lecturerID uint) (*models.Exam, error_utils.ErrorMessage) {
+func (es *examService) CreateExam(examRequest *models.Exam, lecturerID uint) (*models.Exam, error_utils.ErrorMessage) {
 	err := examRequest.Validate()
 
 	if err != nil {
@@ -30,6 +31,16 @@ func (e *examService) CreateExam(examRequest *models.Exam, lecturerID uint) (*mo
 	}
 
 	return examResponse, nil
+}
+
+func (es *examService) GetAllExams(lecturerID uint) ([]*models.ExamResponse, error_utils.ErrorMessage) {
+	examsResponse, err := repository.ExamRepository.GetAllExams(lecturerID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return examsResponse, nil
 }
 
 var ExamService examServiceRepo = &examService{}

@@ -10,6 +10,7 @@ import (
 type Exam struct {
 	GormModel
 	LecturerID uint	`json:"lecturer_id"`
+	Lecturer *Lecturer
 	Title       string `gorm:"type:varchar(200);not null" json:"title" form:"title" valid:"required~Judul ujian tidak boleh kosong"`
 	Description string `gorm:"type:text" json:"description" form:"description"`
 	Status      bool   `gorm:"not null;default:false" json:"status" form:"status"`
@@ -26,4 +27,18 @@ func (e *Exam) Validate() error_utils.ErrorMessage {
 	}
 
 	return nil
+}
+
+type ExamResponse struct {
+	ID uint `json:"id"`
+	LecturerID uint	`json:"lecturer_id"`
+	Lecturer *LecturerResponse `json:"lecturer"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Status      bool   `json:"status"`
+	StartTime   *time.Time `json:"start_time"`
+	EndTime *time.Time `json:"end_time"`
+	Token string `json:"token"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
