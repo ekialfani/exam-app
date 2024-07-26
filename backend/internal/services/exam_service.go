@@ -11,6 +11,7 @@ type examServiceRepo interface {
 	CreateExam(*models.Exam, uint) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
+	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
 
 type examService struct {}
@@ -58,6 +59,16 @@ func (es *examService) UpdateExam(updatedExam *models.ExamUpdate, examId uint) (
 	}
 
 	return examResponse, nil
+}
+
+func (es *examService) DeleteExam(examId uint) (string, error_utils.ErrorMessage) {
+	message, err := repository.ExamRepository.DeleteExam(examId)
+
+	if err != nil {
+		return "", nil
+	}
+
+	return message, nil
 }
 
 var ExamService examServiceRepo = &examService{}

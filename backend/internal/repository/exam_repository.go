@@ -5,12 +5,14 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
+	"fmt"
 )
 
 type examDomainRepo interface {
 	CreateExam(*models.Exam) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
+	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
 
 type examDomain struct {}
@@ -109,6 +111,23 @@ func (ed *examDomain) UpdateExam(updatedExam *models.ExamUpdate, examId uint) (*
 	}
 
 	return &examResponse, nil
+}
+
+func (ed *examDomain) DeleteExam(examId uint) (string, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var exam models.Exam
+	var message string
+
+	err := db.Where("id = ?", examId).Delete(&exam).Error
+
+	if err != nil {
+		message = ""
+		return message, error_formats.ParseError(err)
+	}
+
+	message = fmt.Sprintf("Ujian dengan id %d berhasil dihapus", examId)
+
+	return message, nil
 }
 
 var ExamRepository examDomainRepo = &examDomain{}

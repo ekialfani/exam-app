@@ -85,3 +85,18 @@ func UpdateExam(context *gin.Context) {
 
 	context.JSON(http.StatusOK, examResponse)
 }
+
+func DeleteExam(context *gin.Context) {
+	examId, _ := strconv.Atoi(context.Param("examId"))
+
+	message, err := services.ExamService.DeleteExam(uint(examId))
+
+	if err != nil {
+		context.JSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": message,
+	})
+}
