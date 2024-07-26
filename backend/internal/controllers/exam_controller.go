@@ -6,6 +6,7 @@ import (
 	"backend/internal/utils/error_utils"
 	"backend/internal/utils/header_value_utils"
 	"net/http"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -54,4 +55,33 @@ func GetAllExams(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, examsResponse)
+}
+
+func UpdateExam(context *gin.Context) {
+	contentType := header_value_utils.GetContentType(context, "Content-Type")
+	examId, _ := strconv.Atoi(context.Param("examId"))
+	var updatedExam models.ExamUpdate = models.ExamUpdate{}
+
+	if contentType == "application/json" {
+		if err := context.ShouldBindJSON(&updatedExam); err != nil {
+			errMessage := error_utils.UnprocessableEntity("Data yang dimasukkan tidak sesuai")
+			context.JSON(errMessage.StatusCode(), err)
+			return
+		}
+	} else {
+		if err := context.ShouldBind(&updatedExam); err != nil {
+			errMessage := error_utils.UnprocessableEntity("Data yang dimasukkan tidak sesuai")
+			context.JSON(errMessage.StatusCode(), err)
+			return
+		}
+	}
+
+	examResponse, err := services.ExamService.UpdateExam(&updatedExam, uint(examId))
+
+	if err != nil {
+		context.JSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, examResponse)
 }

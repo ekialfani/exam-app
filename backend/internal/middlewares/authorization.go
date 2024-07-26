@@ -60,3 +60,37 @@ func AdminAuthorization() gin.HandlerFunc {
 		context.Next()
 	}
 }
+
+func ExamAuthorization() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		db := database.GetDB()
+		examId, err := strconv.Atoi(context.Param("examId"))
+		var errMessage error_utils.ErrorMessage
+		var exam models.Exam = models.Exam{}
+
+		if err != nil {
+			errMessage = error_utils.BadRequest("Parameter salah")
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		err = db.Select("lecturer_id").First(&exam, uint(examId)).Error
+
+		if err != nil {
+			errMessage = error_formats.ParseError(err)
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		userData := context.MustGet("userData").(jwt.MapClaims)
+		var lecturerId uint = uint(userData["id"].(float64))
+
+		if exam.LecturerID != lecturerId {
+			errMessage = error_utils.Unauthorized("Tidak dapat mengakses data")
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		context.Next()
+	}
+}

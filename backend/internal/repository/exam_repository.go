@@ -10,6 +10,7 @@ import (
 type examDomainRepo interface {
 	CreateExam(*models.Exam) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 }
 
 type examDomain struct {}
@@ -69,6 +70,45 @@ func (ed *examDomain) GetAllExams(lecturerID uint) ([]*models.ExamResponse, erro
 	}
 
 	return examsResponse, nil
+}
+
+func (ed *examDomain) UpdateExam(updatedExam *models.ExamUpdate, examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var exam models.Exam
+
+	err := db.Model(&exam).Where("id = ?", examId).Updates(updatedExam).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	db.Preload("Lecturer").First(&exam, examId)
+
+	var examResponse = models.ExamResponse{
+		ID: exam.ID,
+		LecturerID: exam.LecturerID,
+		Lecturer: &models.LecturerResponse{
+			ID: exam.Lecturer.ID,
+			FullName: exam.Lecturer.FullName,
+			Nip: exam.Lecturer.Nip,
+			DateOfBirth: exam.Lecturer.DateOfBirth,
+			Gender: exam.Lecturer.Gender,
+			Email: exam.Lecturer.Email,
+			Role: exam.Lecturer.Role,
+			CreatedAt: exam.Lecturer.CreatedAt,
+			UpdatedAt: exam.Lecturer.UpdatedAt,
+		},
+		Title: exam.Title,
+		Description: exam.Description,
+		Status: exam.Status,
+		StartTime: exam.StartTime,
+		EndTime: exam.EndTime,
+		Token: exam.Token,
+		CreatedAt: exam.CreatedAt,
+		UpdatedAt: exam.UpdatedAt,
+	}
+
+	return &examResponse, nil
 }
 
 var ExamRepository examDomainRepo = &examDomain{}

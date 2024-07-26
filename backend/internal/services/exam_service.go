@@ -10,6 +10,7 @@ import (
 type examServiceRepo interface {
 	CreateExam(*models.Exam, uint) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 }
 
 type examService struct {}
@@ -41,6 +42,22 @@ func (es *examService) GetAllExams(lecturerID uint) ([]*models.ExamResponse, err
 	}
 
 	return examsResponse, nil
+}
+
+func (es *examService) UpdateExam(updatedExam *models.ExamUpdate, examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
+	err := updatedExam.Validate()
+
+	if err != nil {
+		return nil, err
+	}
+
+	examResponse, err := repository.ExamRepository.UpdateExam(updatedExam, examId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return examResponse, nil
 }
 
 var ExamService examServiceRepo = &examService{}

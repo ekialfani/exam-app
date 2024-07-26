@@ -42,3 +42,21 @@ type ExamResponse struct {
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }
+
+type ExamUpdate struct {
+	Title       string `gorm:"type:varchar(200);not null" json:"title" form:"title" valid:"required~Judul ujian tidak boleh kosong"`
+	Description string `gorm:"type:text" json:"description" form:"description"`
+	Status      bool   `gorm:"not null;default:false" json:"status" form:"status"`
+	StartTime   *time.Time `gorm:"not null" json:"start_time" form:"start_time" valid:"required~Waktu mulai ujian tidak boleh kosong"`
+	EndTime *time.Time `gorm:"not null" json:"end_time" form:"end_time" valid:"required~Waktu selesai ujian tidak boleh kosong"`
+}
+
+func (eu *ExamUpdate) Validate() error_utils.ErrorMessage {
+	_, err := govalidator.ValidateStruct(eu)
+
+	if err != nil {
+		return error_utils.BadRequest(err.Error())
+	}
+
+	return nil
+}
