@@ -10,6 +10,7 @@ import (
 type questionDomainRepo interface {
 	CreateQuestion(*models.Question) (*models.Question, error_utils.ErrorMessage)
 	GetQuestionsByExamId(uint) ([]*models.Question, error_utils.ErrorMessage)
+	UpdateQuestion(*models.UpdateQuestion, uint) (*models.Question, error_utils.ErrorMessage)
 }
 
 type questionDomain struct {}
@@ -41,6 +42,21 @@ func (qd *questionDomain) GetQuestionsByExamId(examId uint) ([]*models.Question,
 	}
 
 	return questions, nil
+}
+
+func (qd *questionDomain) UpdateQuestion(updatedQuestion *models.UpdateQuestion, questionId uint) (*models.Question, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var question *models.Question
+
+	err := db.Model(&question).Where("id = ?", questionId).Updates(updatedQuestion).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	db.First(&question, questionId)
+
+	return question, nil
 }
 
 var QuestionRepository questionDomainRepo = &questionDomain{}

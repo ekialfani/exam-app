@@ -5,7 +5,6 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
-
 	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
@@ -87,6 +86,39 @@ func ExamAuthorization() gin.HandlerFunc {
 
 		if exam.LecturerID != lecturerId {
 			errMessage = error_utils.Unauthorized("Tidak dapat mengakses data")
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		context.Next()
+	}
+}
+
+func QuestionAuthorization() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		db := database.GetDB()
+		questionId, err := strconv.Atoi(context.Param("questionId"))
+		var question *models.Question
+
+		if err != nil {
+			errMessage := error_utils.BadRequest("Parameter salah")
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		err = db.Preload("Exam").Where("id = ?", questionId).First(&question).Error
+
+		if err != nil {
+			errMessage := error_formats.ParseError(err)
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		userData := context.MustGet("userData").(jwt.MapClaims)
+		var lecturerId uint = uint(userData["id"].(float64))
+
+		if question.Exam.LecturerID != lecturerId {
+			errMessage := error_utils.Unauthorized("Tidak dapat mengakses data")
 			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
 			return
 		}

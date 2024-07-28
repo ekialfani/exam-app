@@ -58,3 +58,32 @@ func GetQuestionsByExamId(context *gin.Context) {
 
 	context.JSON(http.StatusOK, questionsResponse)
 }
+
+func UpdateQuestion(context *gin.Context) {
+	questionId, _ := strconv.Atoi(context.Param("questionId"))
+	contentType := header_value_utils.GetContentType(context, "Content-Type")
+	var updatedQuestion = models.UpdateQuestion{}
+
+	if contentType == "application/json" {
+		if err := context.ShouldBindJSON(&updatedQuestion); err != nil {
+			errMessage := error_utils.BadRequest("Data yang dimasukkan tidak sesuai")
+			context.JSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+	} else {
+		if err := context.ShouldBind(&updatedQuestion); err != nil {
+			errMessage := error_utils.BadRequest("Data yang dimasukkan tidak sesuai")
+			context.JSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+	}
+
+	questionResponse, err := services.QuestionService.UpdateQuestion(&updatedQuestion, uint(questionId))
+
+	if err != nil {
+		context.JSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, questionResponse)
+}
