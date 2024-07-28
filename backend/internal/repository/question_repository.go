@@ -5,12 +5,14 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
+	"fmt"
 )
 
 type questionDomainRepo interface {
 	CreateQuestion(*models.Question) (*models.Question, error_utils.ErrorMessage)
 	GetQuestionsByExamId(uint) ([]*models.Question, error_utils.ErrorMessage)
 	UpdateQuestion(*models.UpdateQuestion, uint) (*models.Question, error_utils.ErrorMessage)
+	DeleteQuestion(uint) (string, error_utils.ErrorMessage)
 }
 
 type questionDomain struct {}
@@ -57,6 +59,22 @@ func (qd *questionDomain) UpdateQuestion(updatedQuestion *models.UpdateQuestion,
 	db.First(&question, questionId)
 
 	return question, nil
+}
+
+func (qd *questionDomain) DeleteQuestion(questionId uint) (string, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var question *models.Question
+	var message string
+
+	err := db.Where("id = ?", questionId).Delete(&question).Error
+
+	if err != nil {
+		message = ""
+		return message, nil
+	}
+
+	message = fmt.Sprintf("soal dengan id %d berhasil dihapus", questionId)
+	return message, nil
 }
 
 var QuestionRepository questionDomainRepo = &questionDomain{}

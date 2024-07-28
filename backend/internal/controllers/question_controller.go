@@ -87,3 +87,18 @@ func UpdateQuestion(context *gin.Context) {
 
 	context.JSON(http.StatusOK, questionResponse)
 }
+
+func DeleteQuestion(context *gin.Context) {
+	questionId, _ := strconv.Atoi(context.Param("questionId"))
+
+	message, err := services.QuestionService.DeleteQuestion(uint(questionId))
+
+	if err != nil {
+		context.JSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": message,
+	})
+}

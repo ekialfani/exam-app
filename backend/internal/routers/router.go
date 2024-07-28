@@ -34,6 +34,7 @@ func StartServer() *gin.Engine {
 		questionRouter.POST("/", middlewares.AdminAuthorization(), controllers.CreateQuestion)
 		questionRouter.GET("/:examId", controllers.GetQuestionsByExamId)
 		questionRouter.PUT("/:questionId", middlewares.AdminAuthorization(), middlewares.QuestionAuthorization(), controllers.UpdateQuestion)
+		questionRouter.DELETE("/:questionId", middlewares.AdminAuthorization(), middlewares.QuestionAuthorization(), controllers.DeleteQuestion)
 	}
 
 	return router
