@@ -6,6 +6,7 @@ import (
 	"backend/internal/utils/error_utils"
 	"backend/internal/utils/header_value_utils"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,4 +38,23 @@ func CreateQuestion(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, questionResponse)
+}
+
+func GetQuestionsByExamId(context *gin.Context) {
+	examId, err := strconv.Atoi(context.Param("examId"))
+
+	if err != nil {
+		errMessage := error_utils.BadRequest("Parameter salah")
+		context.JSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	questionsResponse, errMessage := services.QuestionService.GetQuestionsByExamId(uint(examId))
+
+	if errMessage != nil {
+		context.JSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	context.JSON(http.StatusOK, questionsResponse)
 }

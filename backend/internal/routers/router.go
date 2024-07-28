@@ -32,6 +32,7 @@ func StartServer() *gin.Engine {
 	{
 		questionRouter.Use(middlewares.Authentication())
 		questionRouter.POST("/", middlewares.AdminAuthorization(), controllers.CreateQuestion)
+		questionRouter.GET("/:examId", controllers.GetQuestionsByExamId)
 	}
 
 	return router

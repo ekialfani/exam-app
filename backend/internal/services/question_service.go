@@ -8,6 +8,7 @@ import (
 
 type questionServiceRepo interface {
 	CreateQuestion(*models.Question) (*models.Question, error_utils.ErrorMessage)
+	GetQuestionsByExamId(uint) ([]*models.Question, error_utils.ErrorMessage)
 }
 
 type questionService struct {}
@@ -26,6 +27,16 @@ func (qs *questionService) CreateQuestion(questionRequest *models.Question) (*mo
 	}
 
 	return questionResponse, nil
+}
+
+func (qs *questionService) GetQuestionsByExamId(examId uint) ([]*models.Question, error_utils.ErrorMessage) {
+	questionsResponse, err := repository.QuestionRepository.GetQuestionsByExamId(examId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return questionsResponse, nil
 }
 
 var QuestionService questionServiceRepo = &questionService{}
