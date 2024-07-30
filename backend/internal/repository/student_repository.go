@@ -9,6 +9,7 @@ import (
 
 type studentDomainRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
+	Login(*models.Student) (*models.Student, error_utils.ErrorMessage)
 }
 
 type studenDomain struct {}
@@ -38,6 +39,18 @@ func (sd *studenDomain) Register(studentRequest *models.Student) (*models.Studen
 	}
 
 	return studentResponse, nil
+}
+
+func (sd *studenDomain) Login(studentRequest *models.Student) (*models.Student, error_utils.ErrorMessage) {
+	db := database.GetDB()
+
+	err := db.Where("email = ?", studentRequest.Email).Take(&studentRequest).Error
+
+	if err != nil {
+		return nil, error_utils.Unauthorized("Email/password salah")
+	}
+
+	return studentRequest, nil
 }
 
 var StudentRepository studentDomainRepo = &studenDomain{}

@@ -40,6 +40,7 @@ func StartServer() *gin.Engine {
 	studentRouter := router.Group("/students")
 	{
 		studentRouter.POST("/register", controllers.StudentRegister)
+		studentRouter.POST("/login", controllers.StudentLogin)
 	}
 
 	return router
