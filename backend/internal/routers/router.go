@@ -37,5 +37,10 @@ func StartServer() *gin.Engine {
 		questionRouter.DELETE("/:questionId", middlewares.AdminAuthorization(), middlewares.QuestionAuthorization(), controllers.DeleteQuestion)
 	}
 
+	studentRouter := router.Group("/students")
+	{
+		studentRouter.POST("/register", controllers.StudentRegister)
+	}
+
 	return router
 }
