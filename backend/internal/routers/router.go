@@ -41,6 +41,8 @@ func StartServer() *gin.Engine {
 	{
 		studentRouter.POST("/register", controllers.StudentRegister)
 		studentRouter.POST("/login", controllers.StudentLogin)
+		studentRouter.Use(middlewares.Authentication())
+		studentRouter.PUT("/:studentId", middlewares.StudentAuthorization(), controllers.UpdateStudent)
 	}
 
 	return router

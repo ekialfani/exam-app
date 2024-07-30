@@ -126,3 +126,37 @@ func QuestionAuthorization() gin.HandlerFunc {
 		context.Next()
 	}
 }
+
+func StudentAuthorization() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		db := database.GetDB()
+		studentId, err := strconv.Atoi(context.Param("studentId"))
+
+		if err != nil {
+			errMessage := error_utils.BadRequest("Parameter salah")
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		var student = models.Student{}
+
+		err = db.First(&student, studentId).Error
+
+		if err != nil {
+			errMessage := error_formats.ParseError(err)
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		userData := context.MustGet("userData").(jwt.MapClaims)
+		var id uint = uint(userData["id"].(float64))
+
+		if student.ID != id {
+			errMessage := error_utils.Unauthorized("Tidak dapat Mengakses Data")
+			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+
+		context.Next()
+	}
+}

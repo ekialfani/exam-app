@@ -10,6 +10,7 @@ import (
 type studentDomainRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
 	Login(*models.Student) (*models.Student, error_utils.ErrorMessage)
+	UpdateStudent(*models.UpdateStudent, uint) (*models.StudentResponse, error_utils.ErrorMessage)
 }
 
 type studenDomain struct {}
@@ -51,6 +52,36 @@ func (sd *studenDomain) Login(studentRequest *models.Student) (*models.Student, 
 	}
 
 	return studentRequest, nil
+}
+
+func (sd *studenDomain) UpdateStudent(updatedStudent *models.UpdateStudent, studentId uint) (*models.StudentResponse, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var student *models.Student
+
+	err := db.Model(&student).Where("id = ?", studentId).Updates(updatedStudent).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	db.First(&student, studentId)
+
+	var studentResponse = &models.StudentResponse{
+		ID: student.ID,
+		FullName: student.FullName,
+		Nim: student.Nim,
+		DateOfBirth: student.DateOfBirth,
+		Gender: student.Gender,
+		Major: student.Major,
+		Semester: student.Semester,
+		Class: student.Class,
+		Email: student.Email,
+		Role: student.Role,
+		CreatedAt: student.CreatedAt,
+		UpdatedAt: student.UpdatedAt,
+	}
+
+	return studentResponse, nil
 }
 
 var StudentRepository studentDomainRepo = &studenDomain{}

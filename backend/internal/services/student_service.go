@@ -11,6 +11,7 @@ import (
 type studentServiceRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
 	Login(*models.Student) (string, error_utils.ErrorMessage)
+	UpdateStudent(*models.UpdateStudent, uint) (*models.StudentResponse, error_utils.ErrorMessage)
 }
 
 type studentService struct {}
@@ -53,6 +54,20 @@ func (ss *studentService) Login(studentRequest *models.Student) (string, error_u
 	var token string = token_utils.GenerateToken(studentResponse.ID, studentResponse.Email, studentResponse.Role)
 
 	return token, nil
+}
+
+func (ss *studentService) UpdateStudent(updatedStudent *models.UpdateStudent, studentId uint) (*models.StudentResponse, error_utils.ErrorMessage) {
+	if err := updatedStudent.Validate(); err != nil {
+		return nil, err
+	}
+
+	studentResponse, err := repository.StudentRepository.UpdateStudent(updatedStudent, studentId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return studentResponse, nil
 }
 
 var StudentService studentServiceRepo = &studentService{}

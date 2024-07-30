@@ -45,3 +45,25 @@ type StudentResponse struct {
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }
+
+type UpdateStudent struct {
+	FullName    string `gorm:"type:varchar(200);not null" json:"full_name" form:"full_name" valid:"required~Nama panjang tidak boleh kosong"`
+	Nim         string `gorm:"type:varchar(10);not null;unique" json:"nim" form:"nim" valid:"required~NIM tidak boleh kosong"`
+	DateOfBirth string `gorm:"type:date;not null" json:"date_of_birth" form:"date_of_birth" valid:"required~Tanggal lahir tidak boleh kosong"`
+	Gender      string `gorm:"type:ENUM('Laki-Laki', 'Perempuan');not null" json:"gender" form:"gender" valid:"required~Jenis kelamin tidak boleh kosong"`
+	Major       string `gorm:"type:varchar(200);not null" json:"major" form:"major" valid:"required~Jurusan tidak boleh kosong"`
+	Semester    string `gorm:"type:varchar(200);not null" json:"semester" form:"semester" valid:"required~Semester tidak boleh kosong"`
+	Class       string `gorm:"type:varchar(200);not null" json:"class" form:"class" valid:"required~Kelas tidak boleh kosong"`
+	Email       string `gorm:"type:varchar(200);not null;uniqueIndex" json:"email" form:"email" valid:"required~Email tidak boleh kosong, email~Format email salah"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+}
+
+func (us *UpdateStudent) Validate() error_utils.ErrorMessage {
+	_, err := govalidator.ValidateStruct(us)
+
+	if err != nil {
+		return error_utils.BadRequest(err.Error())
+	}
+
+	return nil
+}
