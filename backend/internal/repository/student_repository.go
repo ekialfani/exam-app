@@ -11,6 +11,7 @@ type studentDomainRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
 	Login(*models.Student) (*models.Student, error_utils.ErrorMessage)
 	UpdateStudent(*models.UpdateStudent, uint) (*models.StudentResponse, error_utils.ErrorMessage)
+	DeleteStudent(uint) (string, error_utils.ErrorMessage)
 }
 
 type studenDomain struct {}
@@ -82,6 +83,22 @@ func (sd *studenDomain) UpdateStudent(updatedStudent *models.UpdateStudent, stud
 	}
 
 	return studentResponse, nil
+}
+
+func (sd *studenDomain) DeleteStudent(studentId uint) (string, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var student *models.Student
+	var message string
+
+	err := db.Where("id = ?", studentId).Delete(&student).Error
+
+	if err != nil {
+		message = ""
+		return "", nil
+	}
+
+	message = "Akun berhasil dihapus"
+	return message, nil
 }
 
 var StudentRepository studentDomainRepo = &studenDomain{}

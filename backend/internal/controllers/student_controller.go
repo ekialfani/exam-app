@@ -98,3 +98,18 @@ func UpdateStudent(context *gin.Context) {
 
 	context.JSON(http.StatusOK, studentResponse)
 }
+
+func DeleteStudent(context *gin.Context) {
+	studentId, _ := strconv.Atoi(context.Param("studentId"))
+
+	message, err := services.StudentService.DeleteStudent(uint(studentId))
+
+	if err != nil {
+		context.JSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": message,
+	})
+}
