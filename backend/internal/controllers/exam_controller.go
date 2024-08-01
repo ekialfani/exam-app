@@ -57,6 +57,19 @@ func GetAllExams(context *gin.Context) {
 	context.JSON(http.StatusOK, examsResponse)
 }
 
+func GetExamByToken(context *gin.Context) {
+	var examToken string = context.Param("examToken")
+
+	examResponse, err := services.ExamService.GetExamByToken(examToken)
+
+	if err != nil {
+		context.JSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, examResponse)
+}
+
 func UpdateExam(context *gin.Context) {
 	contentType := header_value_utils.GetContentType(context, "Content-Type")
 	examId, _ := strconv.Atoi(context.Param("examId"))

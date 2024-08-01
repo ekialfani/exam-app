@@ -10,6 +10,7 @@ import (
 type examServiceRepo interface {
 	CreateExam(*models.Exam, uint) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
@@ -43,6 +44,16 @@ func (es *examService) GetAllExams(lecturerID uint) ([]*models.ExamResponse, err
 	}
 
 	return examsResponse, nil
+}
+
+func (es *examService) GetExamByToken(examToken string) (*models.Exam, error_utils.ErrorMessage) {
+	examResponse, err := repository.ExamRepository.GetExamByToken(examToken)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return examResponse, nil
 }
 
 func (es *examService) UpdateExam(updatedExam *models.ExamUpdate, examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {

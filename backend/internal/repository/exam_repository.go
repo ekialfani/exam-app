@@ -11,6 +11,7 @@ import (
 type examDomainRepo interface {
 	CreateExam(*models.Exam) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
@@ -72,6 +73,19 @@ func (ed *examDomain) GetAllExams(lecturerID uint) ([]*models.ExamResponse, erro
 	}
 
 	return examsResponse, nil
+}
+
+func (ed *examDomain) GetExamByToken(examToken string) (*models.Exam, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var exam *models.Exam
+
+	err := db.Where("token = ?", examToken).First(&exam).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	return exam, nil
 }
 
 func (ed *examDomain) UpdateExam(updatedExam *models.ExamUpdate, examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {

@@ -11,7 +11,7 @@ func Authentication() gin.HandlerFunc {
 		verifyToken, err := token_utils.VerifyToken(context)
 
 		if err != nil {
-			context.JSON(err.StatusCode(), err)
+			context.AbortWithStatusJSON(err.StatusCode(), err)
 			return
 		}
 
