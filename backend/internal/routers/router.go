@@ -51,6 +51,7 @@ func StartServer() *gin.Engine {
 	{
 		examAssignmentRouter.Use(middlewares.Authentication())
 		examAssignmentRouter.POST("/", controllers.CreateExamAssignment)
+		examAssignmentRouter.GET("/", controllers.GetAllExamAssignments)
 	}
 
 	return router

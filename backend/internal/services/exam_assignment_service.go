@@ -8,6 +8,7 @@ import (
 
 type examAssignmentServiceRepo interface {
 	CreateExamAssignment(*models.ExamAssignment, uint) (*models.ExamAssignmentResponse, error_utils.ErrorMessage)
+	GetAllExamAssignments(uint) ([]*models.ExamAssignmentResponse, error_utils.ErrorMessage)
 }
 
 type examAssignmentService struct {}
@@ -26,6 +27,16 @@ func (eas *examAssignmentService) CreateExamAssignment(examAssignmentRequest *mo
 	}
 
 	return examAssignmentResponse, nil
+}
+
+func (eas *examAssignmentService) GetAllExamAssignments(studentId uint) ([]*models.ExamAssignmentResponse, error_utils.ErrorMessage) {
+	examAssignmentsResponse, err := repository.ExamAssignmentRepository.GetAllExamAssignments(studentId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return examAssignmentsResponse, nil
 }
 
 var ExamAssignmentService examAssignmentServiceRepo = &examAssignmentService{}

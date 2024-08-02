@@ -41,3 +41,17 @@ func CreateExamAssignment(context *gin.Context) {
 
 	context.JSON(http.StatusOK, examAssignmentResponse)
 }
+
+func GetAllExamAssignments(context *gin.Context) {
+	userData := context.MustGet("userData").(jwt.MapClaims)
+	var studentId uint = uint(userData["id"].(float64))
+
+	examAssignmentsResponse, err := services.ExamAssignmentService.GetAllExamAssignments(studentId)
+
+	if err != nil {
+		context.AbortWithStatusJSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, examAssignmentsResponse)
+}
