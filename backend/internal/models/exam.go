@@ -18,6 +18,7 @@ type Exam struct {
 	EndTime *time.Time `gorm:"not null" json:"end_time" form:"end_time" valid:"required~Waktu selesai ujian tidak boleh kosong"`
 	Token string `json:"token" form:"token"`
 	Questions []Question
+	ExamAssignments []ExamAssignment `gorm:"many2many:exam_assignments;"`
 }
 
 func (e *Exam) Validate() error_utils.ErrorMessage {

@@ -30,7 +30,7 @@ func StartDB() {
 	config := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, dbName)
 
 	db, err = gorm.Open(mysql.Open(config), &gorm.Config{})
-	
+
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -38,7 +38,7 @@ func StartDB() {
 
 	fmt.Println("berhasil terhubung ke database...")
 
-	db.Debug().AutoMigrate(models.Lecturer{}, models.Exam{}, models.Question{}, models.Student{})
+	db.Debug().AutoMigrate(models.Lecturer{}, models.Exam{}, models.Question{}, models.Student{}, models.ExamAssignment{})
 }
 
 func GetDB() *gorm.DB {

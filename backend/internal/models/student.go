@@ -19,6 +19,7 @@ type Student struct {
 	Email       string `gorm:"type:varchar(200);not null;uniqueIndex" json:"email" form:"email" valid:"required~Email tidak boleh kosong, email~Format email salah"`
 	Password    string `gorm:"type:varchar(200);not null" json:"password" form:"password" valid:"required~Password tidak boleh kosong,minstringlength(6)~Password tidak boleh kurang dari 6 karakter"`
 	Role        string `gorm:"type:ENUM('Dosen', 'Mahasiswa'); not null" json:"role" form:"role" valid:"required~Role tidak boleh kosong"`
+	ExamAssignments []ExamAssignment `gorm:"many2many:exam_assignments;"`
 }
 
 func (s *Student) Validate() error_utils.ErrorMessage {
