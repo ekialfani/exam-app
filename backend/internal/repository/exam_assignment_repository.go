@@ -5,11 +5,13 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
+	"fmt"
 )
 
 type examAssignmentDomainRepo interface {
 	CreateExamAssignment(*models.ExamAssignment) (*models.ExamAssignmentResponse, error_utils.ErrorMessage)
 	GetAllExamAssignments(uint) ([]*models.ExamAssignmentResponse, error_utils.ErrorMessage)
+	DeleteExamAssignment(uint) (string, error_utils.ErrorMessage)
 }
 
 type examAssignmentDomain struct {}
@@ -106,6 +108,22 @@ func (ead *examAssignmentDomain) GetAllExamAssignments(studentId uint) ([]*model
 	}
 
 	return examAssignmentsResponse, nil
+}
+
+func (ead *examAssignmentDomain) DeleteExamAssignment(examId uint) (string, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var message string
+	var examAssignment *models.ExamAssignment
+
+	err := db.Where("exam_id = ?", examId).Delete(&examAssignment).Error
+
+	if err != nil {
+		message = ""
+		return message, error_formats.ParseError(err)
+	}
+
+	message = fmt.Sprintf("Ujian dengan id %d berhasil dihapus", examId)
+	return message, nil
 }
 
 var ExamAssignmentRepository examAssignmentDomainRepo = &examAssignmentDomain{}

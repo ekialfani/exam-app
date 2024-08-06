@@ -6,6 +6,7 @@ import (
 	"backend/internal/utils/error_utils"
 	"backend/internal/utils/header_value_utils"
 	"net/http"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -54,4 +55,19 @@ func GetAllExamAssignments(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, examAssignmentsResponse)
+}
+
+func DeleteExamAssignment(context *gin.Context) {
+	examId, _ := strconv.Atoi(context.Param("examId"))
+
+	message, err := services.ExamAssignmentService.DeleteExamAssignment(uint(examId))
+
+	if err != nil {
+		context.AbortWithStatusJSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": message,
+	})
 }
