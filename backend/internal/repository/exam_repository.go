@@ -11,6 +11,7 @@ import (
 type examDomainRepo interface {
 	CreateExam(*models.Exam) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	DeleteExam(uint) (string, error_utils.ErrorMessage)
@@ -73,6 +74,44 @@ func (ed *examDomain) GetAllExams(lecturerID uint) ([]*models.ExamResponse, erro
 	}
 
 	return examsResponse, nil
+}
+
+func (ed *examDomain) GetExamById(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var exam *models.Exam
+
+	err := db.Preload("Lecturer").Preload("Questions").First(&exam, examId).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	var examResponse = &models.ExamResponse{
+		ID: exam.ID,
+		LecturerID: exam.LecturerID,
+		Lecturer: &models.LecturerResponse{
+			ID: exam.Lecturer.ID,
+			FullName: exam.Lecturer.FullName,
+			Nip: exam.Lecturer.Nip,
+			DateOfBirth: exam.Lecturer.DateOfBirth,
+			Gender: exam.Lecturer.Gender,
+			Email: exam.Lecturer.Email,
+			Role: exam.Lecturer.Role,
+			CreatedAt: exam.Lecturer.CreatedAt,
+			UpdatedAt: exam.Lecturer.UpdatedAt,
+		},
+		Title: exam.Title,
+		Description: exam.Description,
+		Status: exam.Status,
+		StartTime: exam.StartTime,
+		EndTime: exam.EndTime,
+		Token: exam.Token,
+		CreatedAt: exam.CreatedAt,
+		UpdatedAt: exam.UpdatedAt,
+		Questions: exam.Questions,
+	}
+
+	return examResponse, nil
 }
 
 func (ed *examDomain) GetExamByToken(examToken string) (*models.Exam, error_utils.ErrorMessage) {
