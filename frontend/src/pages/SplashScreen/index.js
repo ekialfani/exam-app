@@ -9,7 +9,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace("MainApp");
+      navigation.replace("Login");
     }, 2000);
   });
 

@@ -1,9 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CreateExam, ExamList, Report, SplashScreen } from "../pages";
+import { CreateExam, ExamList, Register, Report, SplashScreen } from "../pages";
 import Dashboard from "../pages/Dashboard";
 import { BottomNavigator } from "../components";
+import Login from "../pages/Login";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -49,6 +50,32 @@ const Router = () => {
         name="MainApp"
         component={MainApp}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: "#018675",
+          },
+          headerTitleStyle: {
+            color: "white",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="Daftar"
+        component={Register}
+        options={{
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: "#018675",
+          },
+          headerTitleStyle: {
+            color: "white",
+          },
+        }}
       />
     </Stack.Navigator>
   );
