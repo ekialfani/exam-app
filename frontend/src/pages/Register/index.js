@@ -1,5 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -9,12 +10,15 @@ import {
   View,
 } from "react-native";
 import { DaftarImage } from "../../assets";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import RadioGroup from "react-native-radio-buttons-group";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "../../redux/slice/authSlice";
+import { ParseDateOfBirth } from "../../utils";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -24,12 +28,18 @@ const Register = () => {
   const [showDate, setShowDate] = useState(false);
   const [selectedId, setSelectedId] = useState();
   const [gender, setGender] = useState("");
+  const [NIM, setNIM] = useState("");
+  const [NIP, setNIP] = useState("");
   const [major, setMajor] = useState("");
+  const [semester, setSemester] = useState("");
   const [classes, setClasses] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
 
   const radioButtons = useMemo(
     () => [
@@ -58,6 +68,43 @@ const Register = () => {
     ],
     []
   );
+
+  const handleUserRegister = () => {
+    let data;
+
+    if (status == "Mahasiswa") {
+      data = {
+        full_name: fullName,
+        nim: NIM,
+        date_of_birth: ParseDateOfBirth(dateOfBirth),
+        gender: gender,
+        major: major,
+        semester: semester,
+        class: classes,
+        email: email,
+        password: password,
+        role: status,
+      };
+    } else {
+      data = {
+        full_name: fullName,
+        nip: NIP,
+        date_of_birth: ParseDateOfBirth(dateOfBirth),
+        gender: gender,
+        email: email,
+        password: password,
+        role: status,
+      };
+    }
+
+    dispatch(register(data));
+  };
+
+  useEffect(() => {
+    if (auth.status == "succeeded") {
+      navigation.navigate("Login")
+    }
+  }, [auth, navigation])
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -111,7 +158,7 @@ const Register = () => {
               <Text className="font-medium text-slate-600">
                 {dateOfBirth.getFullYear() == new Date().getFullYear()
                   ? "DD-MM-YY"
-                  : `${dateOfBirth?.getDate()}-${dateOfBirth?.getMonth()}-${dateOfBirth?.getFullYear()}`}
+                  : ParseDateOfBirth(dateOfBirth)}
               </Text>
               <MaterialIcons name="date-range" size={23} color="#64748b" />
             </TouchableOpacity>
@@ -140,8 +187,18 @@ const Register = () => {
               selectedId={selectedId}
             />
           </View>
-          {status == "Mahasiswa" && (
+          {status == "Mahasiswa" ? (
             <>
+              <View className="mb-5">
+                <Text className="font-bold text-[#0F172A]">NIM</Text>
+                <TextInput
+                  className="bg-[#F5F5F5] px-3 py-2 text-slate-500 mt-2 rounded-md font-medium focus:text-[#018675] focus:border-2 focus:border-[#018675]"
+                  value={NIM}
+                  keyboardType="numeric"
+                  placeholder="Masukkan NIM"
+                  onChangeText={(text) => setNIM(text)}
+                />
+              </View>
               <View className="mb-5">
                 <Text className="font-bold text-[#0F172A]">Program Studi</Text>
                 <TextInput
@@ -149,6 +206,43 @@ const Register = () => {
                   value={major}
                   placeholder="Masukkan program studi"
                   onChangeText={(text) => setMajor(text)}
+                />
+              </View>
+              <View className="mb-5">
+                <Text className="font-bold text-[#0F172A] mb-2">Semester</Text>
+                <Dropdown
+                  style={[styles.dropdown, isFocus && styles.focus]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={[
+                    { label: "1", value: "1" },
+                    { label: "2", value: "2" },
+                    { label: "3", value: "3" },
+                    { label: "4", value: "4" },
+                    { label: "5", value: "5" },
+                    { label: "6", value: "6" },
+                    { label: "7", value: "7" },
+                    { label: "8", value: "8" },
+                    { label: "9", value: "9" },
+                    { label: "10", value: "10" },
+                    { label: "11", value: "11" },
+                    { label: "12", value: "12" },
+                    { label: "13", value: "13" },
+                    { label: "14", value: "14" },
+                  ]}
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? "Select item" : "..."}
+                  value={semester}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
+                  onChange={(item) => {
+                    setSemester(item.value);
+                    setIsFocus(false);
+                  }}
                 />
               </View>
               <View className="mb-5">
@@ -178,6 +272,19 @@ const Register = () => {
                     setClasses(item.value);
                     setIsFocus(false);
                   }}
+                />
+              </View>
+            </>
+          ) : (
+            <>
+              <View className="mb-5">
+                <Text className="font-bold text-[#0F172A]">NIP</Text>
+                <TextInput
+                  className="bg-[#F5F5F5] px-3 py-2 text-slate-500 mt-2 rounded-md font-medium focus:text-[#018675] focus:border-2 focus:border-[#018675]"
+                  value={NIP}
+                  keyboardType="numeric"
+                  placeholder="Masukkan NIP"
+                  onChangeText={(text) => setNIP(text)}
                 />
               </View>
             </>
@@ -216,43 +323,22 @@ const Register = () => {
           </View>
           <TouchableOpacity
             className="bg-[#018675] rounded-md"
-            onPress={() => {
-              if (status == "Mahasiswa") {
-                console.log({
-                  fullName,
-                  status,
-                  dateOfBirth,
-                  gender: radioButtons.find((rb) => rb.id == selectedId).value,
-                  major,
-                  classes,
-                  email,
-                  password,
-                });
-              } else {
-                console.log({
-                  fullName,
-                  status,
-                  dateOfBirth,
-                  gender,
-                  email,
-                  password,
-                });
-              }
-
-              setFullName("");
-              setStatus("Mahasiswa");
-              setDateOfBirth(new Date());
-              setSelectedId(1);
-              setMajor("");
-              setClasses("");
-              setEmail("");
-              setPassword("");
-            }}
+            onPress={handleUserRegister}
           >
-            <Text className="text-white font-medium text-center py-2.5">
-              Daftar
-            </Text>
+            {auth.status == "loading" ? (
+             <ActivityIndicator
+                className="py-2.5 font-bold"
+                size="small"
+                color="#fff"
+                animating={true}
+              />
+            ) : (
+              <Text className="text-white font-medium text-center py-2.5">
+                Daftar
+              </Text>
+            )}
           </TouchableOpacity>
+          {auth.error?.message && <Text className="text-red-500 mt-2">{auth.error.message}</Text>}
           <View className="mt-3 flex-row justify-center mb-10">
             <Text className="text-xs font-medium mr-1">
               Sudah memiliki akun?
