@@ -13,10 +13,14 @@ func StartServer() *gin.Engine {
 	lecturerRouter := router.Group("/lecturers")
 	{
 		lecturerRouter.POST("/register", controllers.LecturerRegister)
-		lecturerRouter.POST("/login", controllers.LecturerLogin)
 		lecturerRouter.Use(middlewares.Authentication())
 		lecturerRouter.PUT("/:lecturerId", middlewares.LecturerAuthorization(), controllers.UpdateLecturer)
 		lecturerRouter.DELETE("/:lecturerId", middlewares.LecturerAuthorization(), controllers.DeleteLecturer)
+	}
+
+	userLoginRouter := router.Group("/users")
+	{
+		userLoginRouter.POST("/login", controllers.UserLogin)
 	}
 
 	examRouter := router.Group("/exams")
@@ -42,7 +46,6 @@ func StartServer() *gin.Engine {
 	studentRouter := router.Group("/students")
 	{
 		studentRouter.POST("/register", controllers.StudentRegister)
-		studentRouter.POST("/login", controllers.StudentLogin)
 		studentRouter.Use(middlewares.Authentication())
 		studentRouter.PUT("/:studentId", middlewares.StudentAuthorization(), controllers.UpdateStudent)
 		studentRouter.DELETE("/:studentId", middlewares.StudentAuthorization(), controllers.DeleteStudent)

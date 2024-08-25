@@ -9,7 +9,6 @@ import (
 
 type lecturerDomainRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
-	Login(*models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage)
 	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
 	DeleteLecturer(uint) (string, error_utils.ErrorMessage)
 }
@@ -38,18 +37,6 @@ func (ld *lecturerDomain) Register(lecturerRequest *models.Lecturer) (*models.Le
 	}
 
 	return lecturerResponse, nil
-}
-
-func (ld *lecturerDomain) Login(LecturerRequest *models.Lecturer) (*models.Lecturer, error_utils.ErrorMessage) {
-	db := database.GetDB()
-
-	err := db.Debug().Where("email = ?", LecturerRequest.Email).Take(&LecturerRequest).Error
-
-	if err != nil {
-		return nil, error_utils.Unauthorized("Email/Password salah")
-	}
-
-	return LecturerRequest, nil
 }
 
 func (ld *lecturerDomain) UpdateLecturer(updatedLecturer *models.LecturerUpdate, lecturerId uint) (*models.LecturerResponse, error_utils.ErrorMessage) {

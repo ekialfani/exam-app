@@ -5,7 +5,7 @@ export const register = createAsyncThunk("auth/register", async (userData) => {
   try {
     if (userData.role == "Mahasiswa") {
       const response = await axios.post(
-        "http://172.16.20.113:8080/students/register",
+        "http://192.168.197.98:8080/students/register",
         userData,
         {
           headers: {
@@ -17,7 +17,7 @@ export const register = createAsyncThunk("auth/register", async (userData) => {
       return response.data;
     } else {
       const response = await axios.post(
-        "http://172.16.20.113:8080/lecturers/register",
+        "http://192.168.197.98:8080/lecturers/register",
         userData,
         {
           headers: {
@@ -28,8 +28,26 @@ export const register = createAsyncThunk("auth/register", async (userData) => {
 
       return response.data;
     }
-  } catch(error) {
-    throw(error.response.data)
+  } catch (error) {
+    throw error.response.data;
+  }
+});
+
+export const login = createAsyncThunk("auth/login", async (userData) => {
+  try {
+    const response = await axios.post(
+      "http://192.168.197.98:8080/users/login",
+      userData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
   }
 });
 
@@ -43,23 +61,46 @@ const initialState = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
+  reducers: {
+    logout: (state) => {
+      state.status = "idle";
+      state.user = null;
+      state.token = null;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
-        state.status = "loading"
+        state.status = "loading";
         state.user = null;
         state.token = null;
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.status = "succeeded"
-        state.user = action.payload
+        state.status = "succeeded";
+        state.user = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
-        state.status = "failed"
-        state.error = action.error
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(login.pending, (state) => {
+        state.status = "loading";
+        state.token = null;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.token = action.payload.token;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
       });
   },
 });
+
+export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/slice/authSlice";
 import { useEffect } from "react";
 
-const Report = () => {
+const Setting = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const auth = useSelector((state) => state.auth);
@@ -22,9 +22,9 @@ const Report = () => {
 
   return (
     <View className="items-center">
-      <Text>Halaman Laporan</Text>
+      <Text>Halaman pengaturan</Text>
       <TouchableOpacity
-        className="bg-[#018675] py-2 rounded-md w-32 mt-5"
+        className="w-32 bg-[#018675] mt-5 py-2 rounded-md"
         onPress={handleUserLogout}
       >
         <Text className="text-center font-bold text-white">Logout</Text>
@@ -33,4 +33,4 @@ const Report = () => {
   );
 };
 
-export default Report;
+export default Setting;

@@ -1,7 +1,16 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CreateExam, ExamList, Register, Report, SplashScreen } from "../pages";
+import {
+  CompletedExam,
+  CreateExam,
+  ExamList,
+  Home,
+  Register,
+  Report,
+  Setting,
+  SplashScreen,
+} from "../pages";
 import Dashboard from "../pages/Dashboard";
 import { BottomNavigator } from "../components";
 import Login from "../pages/Login";
@@ -9,7 +18,7 @@ import Login from "../pages/Login";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const MainApp = () => {
+const AdminPage = () => {
   return (
     <Tab.Navigator tabBar={(props) => <BottomNavigator {...props} />}>
       <Tab.Screen
@@ -38,6 +47,35 @@ const MainApp = () => {
   );
 };
 
+const MainPage = () => {
+  return (
+    <Tab.Navigator tabBar={(props) => <BottomNavigator {...props} />}>
+      <Tab.Screen
+        name="Beranda"
+        component={Home}
+        options={{
+          headerTitleAlign: "center",
+        }}
+      />
+      <Tab.Screen
+        name="Daftar Ujian"
+        component={ExamList}
+        options={{ headerTitleAlign: "center" }}
+      />
+      <Tab.Screen
+        name="Selesai"
+        component={CompletedExam}
+        options={{ headerTitleAlign: "center" }}
+      />
+      <Tab.Screen
+        name="Pengaturan"
+        component={Setting}
+        options={{ headerTitleAlign: "center" }}
+      />
+    </Tab.Navigator>
+  );
+};
+
 const Router = () => {
   return (
     <Stack.Navigator>
@@ -47,8 +85,13 @@ const Router = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="MainApp"
-        component={MainApp}
+        name="MainPage"
+        component={MainPage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AdminPage"
+        component={AdminPage}
         options={{ headerShown: false }}
       />
       <Stack.Screen

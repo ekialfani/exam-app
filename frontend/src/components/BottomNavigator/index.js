@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
 import {
-  AntDesign,
-  FontAwesome,
   Ionicons,
+  MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -12,34 +11,68 @@ const Icon = ({ label, focus }) => {
   switch (label) {
     case "Dashboard":
       return focus ? (
-        <MaterialIcons name="dashboard" size={20} color={"#018675"} />
+        <MaterialIcons name="dashboard" size={21} color={"#018675"} />
       ) : (
-        <MaterialIcons name="dashboard" size={20} color={"#B4B9C2"} />
+        <MaterialIcons name="dashboard" size={21} color={"#B4B9C2"} />
       );
     case "Buat Ujian":
       return focus ? (
-        <AntDesign name="pluscircle" size={19} color={"#018675"} />
+        <MaterialCommunityIcons
+          name="plus-circle"
+          size={21}
+          color={"#018675"}
+        />
       ) : (
-        <AntDesign name="pluscircle" size={19} color={"#B4B9C2"} />
+        <MaterialCommunityIcons
+          name="plus-circle"
+          size={21}
+          color={"#B4B9C2"}
+        />
       );
     case "Daftar Ujian":
       return focus ? (
-        <FontAwesome name="list" size={19} color={"#018675"} />
+        <MaterialCommunityIcons
+          name="clipboard-list"
+          size={21}
+          color={"#018675"}
+        />
       ) : (
-        <FontAwesome name="list" size={19} color={"#B4B9C2"} />
+        <MaterialCommunityIcons
+          name="clipboard-list"
+          size={21}
+          color={"#B4B9C2"}
+        />
       );
-    default:
+    case "Laporan":
       return focus ? (
-        <Ionicons name="stats-chart-sharp" size={20} color={"#018675"} />
+        <Ionicons name="stats-chart" size={20} color={"#018675"} />
       ) : (
-        <Ionicons name="stats-chart-sharp" size={20} color={"#B4B9C2"} />
+        <Ionicons name="stats-chart" size={20} color={"#B4B9C2"} />
+      );
+    case "Beranda":
+      return focus ? (
+        <MaterialIcons name="home-filled" size={22} color={"#018675"} />
+      ) : (
+        <MaterialIcons name="home-filled" size={22} color={"#B4B9C2"} />
+      );
+    case "Selesai":
+      return focus ? (
+        <MaterialIcons name="task" size={21} color={"#018675"} />
+      ) : (
+        <MaterialIcons name="task" size={21} color={"#B4B9C2"} />
+      );
+    case "Pengaturan":
+      return focus ? (
+        <MaterialIcons name="settings" size={21} color={"#018675"} />
+      ) : (
+        <MaterialIcons name="settings" size={21} color={"#B4B9C2"} />
       );
   }
 };
 
 const BottomNavigator = ({ state, descriptors, navigation }) => {
   return (
-    <View className="flex-row justify-between bg-white px-5 py-3 rounded-t-3xl shadow-inner">
+    <View className="flex-row justify-between bg-white px-6 py-3 rounded-t-3xl shadow-inner">
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =

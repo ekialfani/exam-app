@@ -1,5 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   Text,
@@ -8,15 +9,46 @@ import {
   View,
 } from "react-native";
 import { LoginImage } from "../../assets/";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../redux/slice/authSlice";
+import DecodeJwtToken from "../../utils/DecodeJwtToken";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const handleUserLogin = () => {
+    dispatch(login({ email, password }));
+  };
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+  };
+
+  useEffect(() => {
+    if (auth.token) {
+      const decodedToken = DecodeJwtToken(auth.token);
+      if (decodedToken.role == "Dosen") {
+        navigation.navigate("AdminPage", {
+          userId: decodedToken.id,
+        });
+      } else {
+        navigation.navigate("MainPage", {
+          userId: decodedToken.id,
+        });
+      }
+
+      resetForm();
+    }
+  }, [auth.token]);
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -55,11 +87,26 @@ const Login = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity className="bg-[#018675] rounded-md">
-            <Text className="text-white font-medium text-center py-2.5">
-              Login
-            </Text>
+          <TouchableOpacity
+            className="bg-[#018675] rounded-md"
+            onPress={handleUserLogin}
+          >
+            {auth?.status == "loading" ? (
+              <ActivityIndicator
+                className="py-2.5 font-bold"
+                size="small"
+                color="#fff"
+                animating={true}
+              />
+            ) : (
+              <Text className="text-white font-medium text-center py-2.5">
+                Login
+              </Text>
+            )}
           </TouchableOpacity>
+          {auth.error?.message && (
+            <Text className="text-red-500 mt-2">{auth.error.message}</Text>
+          )}
           <View className="mt-3 flex-row justify-center">
             <Text className="text-xs font-medium mr-1">
               Belum memiliki akun?
