@@ -1,3 +1,2 @@
-import ParseDateOfBirth from "./Date";
-
-export { ParseDateOfBirth };
+export * from "./Date";
+export * from "./Time";

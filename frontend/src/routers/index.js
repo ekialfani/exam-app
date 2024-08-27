@@ -4,6 +4,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   CompletedExam,
   CreateExam,
+  CreateQuestion,
+  EditQuestion,
   ExamList,
   Home,
   Register,
@@ -118,6 +120,20 @@ const Router = () => {
           headerTitleStyle: {
             color: "white",
           },
+        }}
+      />
+      <Stack.Screen
+        name="Buat Soal"
+        component={CreateQuestion}
+        options={{
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="Edit Soal"
+        component={EditQuestion}
+        options={{
+          headerTitleAlign: "center",
         }}
       />
     </Stack.Navigator>

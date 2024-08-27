@@ -1,5 +1,4 @@
-const ParseDateOfBirth = (date) => {
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-};
+import ParseDateOfBirth from "./ParseDateOfBirth";
+import ParseDateToIndonesianFormat from "./ParseDateToIndonesianFormat";
 
-export default ParseDateOfBirth;
+export { ParseDateOfBirth, ParseDateToIndonesianFormat };

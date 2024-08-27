@@ -6,6 +6,8 @@ import Report from "./Report";
 import Register from "./Register";
 import CompletedExam from "./CompletedExam";
 import Setting from "./Setting";
+import CreateQuestion from "./CreateQuestion";
+import EditQuestion from "./EditQuestion";
 
 export {
   Home,
@@ -16,4 +18,6 @@ export {
   Register,
   CompletedExam,
   Setting,
+  CreateQuestion,
+  EditQuestion,
 };

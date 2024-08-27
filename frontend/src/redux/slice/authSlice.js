@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import CONFIG from "../../config";
 
 export const register = createAsyncThunk("auth/register", async (userData) => {
   try {
     if (userData.role == "Mahasiswa") {
       const response = await axios.post(
-        "http://192.168.197.98:8080/students/register",
+        `${CONFIG.apiUrl}:8080/students/register`,
         userData,
         {
           headers: {
@@ -17,7 +18,7 @@ export const register = createAsyncThunk("auth/register", async (userData) => {
       return response.data;
     } else {
       const response = await axios.post(
-        "http://192.168.197.98:8080/lecturers/register",
+        `${CONFIG.apiUrl}:8080/lecturers/register`,
         userData,
         {
           headers: {
@@ -36,7 +37,7 @@ export const register = createAsyncThunk("auth/register", async (userData) => {
 export const login = createAsyncThunk("auth/login", async (userData) => {
   try {
     const response = await axios.post(
-      "http://192.168.197.98:8080/users/login",
+      `${CONFIG.apiUrl}:8080/users/login`,
       userData,
       {
         headers: {
