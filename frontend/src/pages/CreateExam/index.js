@@ -99,7 +99,9 @@ const CreateExam = () => {
 
         if (index == questionsTemp.length - 1) {
           handleResetForm();
-          navigation.navigate("Dashboard");
+          navigation.navigate("AdminExamDetail", {
+            examId: exam.examCreated.id,
+          });
         }
       });
 
@@ -307,7 +309,9 @@ const CreateExam = () => {
           </TouchableOpacity>
 
           <Text
-            className={`text-xs text-red-500 mt-2 ${exam?.error ? "opacity-1" : "opacity-0"}`}
+            className={`text-xs text-red-500 mt-2 ${
+              exam?.error ? "opacity-1" : "opacity-0"
+            }`}
           >
             {exam?.error?.message}
           </Text>

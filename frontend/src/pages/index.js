@@ -8,6 +8,7 @@ import CompletedExam from "./CompletedExam";
 import Setting from "./Setting";
 import CreateQuestion from "./CreateQuestion";
 import EditQuestion from "./EditQuestion";
+import AdminExamDetail from "./AdminExamDetail";
 
 export {
   Home,
@@ -20,4 +21,5 @@ export {
   Setting,
   CreateQuestion,
   EditQuestion,
+  AdminExamDetail,
 };

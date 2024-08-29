@@ -2,6 +2,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
+  AdminExamDetail,
   CompletedExam,
   CreateExam,
   CreateQuestion,
@@ -133,6 +134,14 @@ const Router = () => {
         name="Edit Soal"
         component={EditQuestion}
         options={{
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="AdminExamDetail"
+        component={AdminExamDetail}
+        options={{
+          title: "Detail Ujian",
           headerTitleAlign: "center",
         }}
       />
