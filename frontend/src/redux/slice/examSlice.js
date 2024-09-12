@@ -24,6 +24,24 @@ export const createExam = createAsyncThunk(
   }
 );
 
+export const getAllExams = createAsyncThunk(
+  "exam/get-all-exams",
+  async ({ token }) => {
+    try {
+      const response = await axios.get(`${CONFIG.apiUrl}:8080/exams/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 export const getExamById = createAsyncThunk(
   "exam/get-exam-by-id",
   async ({ examId, token }) => {
@@ -71,6 +89,7 @@ const initialState = {
   status: "idle",
   examCreated: null,
   exam: null,
+  exams: null,
   error: null,
 };
 
@@ -90,6 +109,19 @@ const examSlice = createSlice({
         state.examCreated = action.payload;
       })
       .addCase(createExam.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(getAllExams.pending, (state) => {
+        state.status = "loading";
+        state.exams = null;
+        state.error = null;
+      })
+      .addCase(getAllExams.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.exams = action.payload;
+      })
+      .addCase(getAllExams.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       })

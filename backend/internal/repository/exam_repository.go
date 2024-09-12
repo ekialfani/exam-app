@@ -35,7 +35,7 @@ func (ed *examDomain) GetAllExams(lecturerID uint) ([]*models.ExamResponse, erro
 	var exams []*models.Exam
 	var examsResponse []*models.ExamResponse
 
-	err := db.Preload("Lecturer").Where("lecturer_id = ?", lecturerID).Find(&exams).Error
+	err := db.Preload("Lecturer").Where("lecturer_id = ?", lecturerID).Preload("Questions").Find(&exams).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -68,6 +68,7 @@ func (ed *examDomain) GetAllExams(lecturerID uint) ([]*models.ExamResponse, erro
 			Token: exam.Token,
 			CreatedAt: exam.CreatedAt,
 			UpdatedAt: exam.UpdatedAt,
+			Questions: exam.Questions,
 		}
 
 		examsResponse = append(examsResponse, &newExam)
