@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { LoginImage } from "../../assets/";
+import { LoginImage } from "../../../assets";
 import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../redux/slice/authSlice";
-import DecodeJwtToken from "../../utils/DecodeJwtToken";
+import { login } from "../../../redux/slice/authSlice";
+import DecodeJwtToken from "../../../utils/DecodeJwtToken";
 
 const Login = () => {
   const [email, setEmail] = useState("");

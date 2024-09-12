@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllExams } from "../../redux/slice/examSlice";
+import { getAllExams } from "../../../redux/slice/examSlice";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 const ExamList = () => {

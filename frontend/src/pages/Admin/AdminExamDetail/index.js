@@ -20,15 +20,15 @@ import {
   View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { getExamById } from "../../redux/slice/examSlice";
+import { getExamById } from "../../../redux/slice/examSlice";
 import {
   ParseDateToIndonesianFormat,
   ParseTimeToIndonesianFormat,
-} from "../../utils";
+} from "../../../utils";
 import {
   deleteQuestion,
   getQuestionsByExamId,
-} from "../../redux/slice/questionSlice";
+} from "../../../redux/slice/questionSlice";
 import { useIsFocused } from "@react-navigation/native";
 
 const AdminExamDetail = ({ route, navigation }) => {

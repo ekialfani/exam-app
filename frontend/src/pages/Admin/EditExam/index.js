@@ -10,12 +10,12 @@ import {
   View,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { ParseDateToIndonesianFormat } from "../../utils/Date";
-import { ParseTimeToIndonesianFormat } from "../../utils";
+import { ParseDateToIndonesianFormat } from "../../../utils/";
+import { ParseTimeToIndonesianFormat } from "../../../utils";
 import { useNavigation } from "@react-navigation/native";
-import ParseExamSchedule from "../../utils/ParseExamSchedule";
+import ParseExamSchedule from "../../../utils/ParseExamSchedule";
 import { useDispatch, useSelector } from "react-redux";
-import { getExamById, updateExam } from "../../redux/slice/examSlice";
+import { getExamById, updateExam } from "../../../redux/slice/examSlice";
 
 const EditExam = ({ route }) => {
   const { examId } = route.params;

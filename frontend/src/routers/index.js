@@ -6,18 +6,18 @@ import {
   CompletedExam,
   CreateExam,
   CreateQuestion,
+  Dashboard,
   EditExam,
   EditQuestion,
   ExamList,
   Home,
+  Login,
   Register,
   Report,
   Setting,
   SplashScreen,
 } from "../pages";
-import Dashboard from "../pages/Dashboard";
 import { BottomNavigator } from "../components";
-import Login from "../pages/Login";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

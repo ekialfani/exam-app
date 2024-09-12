@@ -2,7 +2,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/slice/authSlice";
+import { logout } from "../../../redux/slice/authSlice";
 import { useEffect } from "react";
 
 const Report = () => {

@@ -11,17 +11,17 @@ import {
   View,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { ParseDateToIndonesianFormat } from "../../utils/Date";
-import { ParseTimeToIndonesianFormat } from "../../utils";
+import { ParseDateToIndonesianFormat } from "../../../utils/Date";
+import { ParseTimeToIndonesianFormat } from "../../../utils";
 import { useNavigation } from "@react-navigation/native";
-import ParseExamSchedule from "../../utils/ParseExamSchedule";
+import ParseExamSchedule from "../../../utils/ParseExamSchedule";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createQuestion,
   createQuestionTemp,
   resetQuestionTemp,
-} from "../../redux/slice/questionSlice";
-import { createExam } from "../../redux/slice/examSlice";
+} from "../../../redux/slice/questionSlice";
+import { createExam } from "../../../redux/slice/examSlice";
 
 const CreateExam = () => {
   const [title, setTitle] = useState("");

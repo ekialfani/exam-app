@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { DaftarImage } from "../../assets";
+import { DaftarImage } from "../../../assets";
 import { useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -17,8 +17,8 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import RadioGroup from "react-native-radio-buttons-group";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../../redux/slice/authSlice";
-import { ParseDateOfBirth } from "../../utils";
+import { register } from "../../../redux/slice/authSlice";
+import { ParseDateOfBirth } from "../../../utils";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");

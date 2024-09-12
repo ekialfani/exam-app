@@ -14,34 +14,34 @@ import { Dropdown } from "react-native-element-dropdown";
 import { TextInput } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  editQuestionTemp,
-  updateQuestion,
-} from "../../redux/slice/questionSlice";
+  createQuestion,
+  createQuestionTemp,
+} from "../../../redux/slice/questionSlice";
 
-const EditQuestion = ({ route, navigation }) => {
-  const { question } = route.params;
+const CreateQuestion = ({ route, navigation }) => {
+  const { examId, lastQuestionId } = route.params;
 
   const [isFocus, setIsFocus] = useState(false);
-  const [point, setPoint] = useState(question.point || 5);
-  const [questionText, setQuestionText] = useState(question.question_text);
-  const [firstOption, setFirstOption] = useState(question.first_option);
-  const [secondOption, setSecondOption] = useState(question.second_option);
-  const [thirdOption, setThirdOption] = useState(question.third_option);
-  const [fourthOption, setFourthOption] = useState(question.fourth_option);
-  const [correctAnswer, setCorrectAnswer] = useState(question.correct_answer);
+  const [point, setPoint] = useState(5);
+  const [questionText, setQuestionText] = useState("");
+  const [firstOption, setFirstOption] = useState("");
+  const [secondOption, setSecondOption] = useState("");
+  const [thirdOption, setThirdOption] = useState("");
+  const [fourthOption, setFourthOption] = useState("");
+  const [correctAnswer, setCorrectAnswer] = useState(null);
   const [trigger, setTrigger] = useState(false);
 
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
-  const updatedQuestion = useSelector((state) => state.question);
+  const question = useSelector((state) => state.question);
 
   useEffect(() => {
-    if (trigger && updatedQuestion.status === "succeeded") {
-      navigation.navigate("AdminExamDetail", { examId: question.exam_id });
+    if (trigger && question.status === "succeeded") {
+      navigation.navigate("AdminExamDetail", { examId: examId });
       handleResetForm();
       setTrigger(false);
     }
-  }, [trigger, updatedQuestion.status]);
+  }, [trigger, question.status]);
 
   const resetOptionCorrect = () => {
     setCorrectAnswer(null);
@@ -57,10 +57,10 @@ const EditQuestion = ({ route, navigation }) => {
     setCorrectAnswer(null);
   };
 
-  const handleEditQuestionTemp = () => {
+  const handleCreateQuestionTemp = () => {
     const data = {
-      id: question.id,
-      exam_id: question.exam_id,
+      id: parseInt(lastQuestionId + 1),
+      exam_id: examId,
       question_text: questionText,
       first_option: firstOption,
       second_option: secondOption,
@@ -70,15 +70,13 @@ const EditQuestion = ({ route, navigation }) => {
       point: parseInt(point),
     };
 
-    dispatch(editQuestionTemp(data));
-    handleResetForm();
-    navigation.goBack();
+    dispatch(createQuestionTemp(data));
   };
 
-  const handleUpdateQuestion = () => {
-    if (question.exam_id) {
-      const updatedQuestion = {
-        exam_id: question.exam_id,
+  const handleCreateQuestion = () => {
+    if (examId) {
+      const questionData = {
+        exam_id: examId,
         question_text: questionText,
         first_option: firstOption,
         second_option: secondOption,
@@ -88,14 +86,13 @@ const EditQuestion = ({ route, navigation }) => {
         point: parseInt(point),
       };
 
-      dispatch(
-        updateQuestion({ questionId: question.id, updatedQuestion, token })
-      );
+      dispatch(createQuestion({ questionData, token }));
       setTrigger(true);
       return;
     }
-
-    handleEditQuestionTemp();
+    handleCreateQuestionTemp();
+    handleResetForm();
+    navigation.goBack();
   };
 
   return (
@@ -250,29 +247,31 @@ const EditQuestion = ({ route, navigation }) => {
 
           <Text
             className={`text-xs text-red-500 mt-2 mb-2 ${
-              updatedQuestion?.error ? "opacity-1" : "opacity-0"
+              question?.error ? "opacity-1" : "opacity-0"
             }`}
           >
-            {updatedQuestion?.error?.message}
+            {question?.error?.message}
           </Text>
 
           <TouchableOpacity
-            className="bg-[#018675] py-2 rounded-md justify-center items-center w-32"
-            onPress={handleUpdateQuestion}
-          >
-            {updatedQuestion.status == "loading" ? (
-              <ActivityIndicator size="small" color="#fff" animating={true} />
-            ) : (
-              <Text className="font-medium uppercase text-white">simpan</Text>
-            )}
-          </TouchableOpacity>
+              className="bg-[#018675] py-2 rounded-md justify-center items-center w-32"
+              onPress={handleCreateQuestion}
+            >
+              {question?.status == "loading" ? (
+                <ActivityIndicator size="small" color="#fff" animating={true} />
+              ) : (
+                <Text className="font-medium uppercase text-white">
+                  buat soal
+                </Text>
+              )}
+            </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
   );
 };
 
-export default EditQuestion;
+export default CreateQuestion;
 
 const styles = StyleSheet.create({
   dropdown: {
