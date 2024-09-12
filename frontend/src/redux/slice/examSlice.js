@@ -45,6 +45,28 @@ export const getExamById = createAsyncThunk(
   }
 );
 
+export const updateExam = createAsyncThunk(
+  "exam/update-exam",
+  async ({ examId, updatedExam, token }) => {
+    try {
+      const response = await axios.put(
+        `${CONFIG.apiUrl}:8080/exams/${examId}`,
+        updatedExam,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   examCreated: null,
@@ -81,6 +103,19 @@ const examSlice = createSlice({
         state.exam = action.payload;
       })
       .addCase(getExamById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(updateExam.pending, (state) => {
+        state.status = "loading";
+        state.exam = null;
+        state.error = null;
+      })
+      .addCase(updateExam.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.exam = action.payload;
+      })
+      .addCase(updateExam.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });

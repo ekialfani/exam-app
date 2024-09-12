@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
 import { FontAwesome } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,8 +12,11 @@ import {
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { TextInput } from "react-native-gesture-handler";
-import { useDispatch } from "react-redux";
-import { createQuestionTemp } from "../../redux/slice/questionSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createQuestion,
+  createQuestionTemp,
+} from "../../redux/slice/questionSlice";
 
 const CreateQuestion = ({ route, navigation }) => {
   const { examId, lastQuestionId } = route.params;
@@ -24,18 +28,23 @@ const CreateQuestion = ({ route, navigation }) => {
   const [secondOption, setSecondOption] = useState("");
   const [thirdOption, setThirdOption] = useState("");
   const [fourthOption, setFourthOption] = useState("");
-  const [isFirstCorrect, setIsFirstCorrect] = useState(false);
-  const [isSecondCorrect, setIsSecondCorrect] = useState(false);
-  const [isThirdCorrect, setIsThirdCorrect] = useState(false);
-  const [isFourthCorrect, setIsFourthCorrect] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [trigger, setTrigger] = useState(false);
 
   const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const question = useSelector((state) => state.question);
+
+  useEffect(() => {
+    if (trigger && question.status === "succeeded") {
+      navigation.navigate("AdminExamDetail", { examId: examId });
+      handleResetForm();
+      setTrigger(false);
+    }
+  }, [trigger, question.status]);
 
   const resetOptionCorrect = () => {
-    setIsFirstCorrect(false);
-    setIsSecondCorrect(false);
-    setIsThirdCorrect(false);
-    setIsFourthCorrect(false);
+    setCorrectAnswer(null);
   };
 
   const handleResetForm = () => {
@@ -45,10 +54,7 @@ const CreateQuestion = ({ route, navigation }) => {
     setSecondOption("");
     setThirdOption("");
     setFourthOption("");
-    setIsFirstCorrect(false);
-    setIsSecondCorrect(false);
-    setIsThirdCorrect(false);
-    setIsFourthCorrect(false);
+    setCorrectAnswer(null);
   };
 
   const handleCreateQuestionTemp = () => {
@@ -56,22 +62,11 @@ const CreateQuestion = ({ route, navigation }) => {
       id: parseInt(lastQuestionId + 1),
       exam_id: examId,
       question_text: questionText,
-      first_option: {
-        text: firstOption,
-        is_correct: isFirstCorrect,
-      },
-      second_option: {
-        text: secondOption,
-        is_correct: isSecondCorrect,
-      },
-      third_option: {
-        text: thirdOption,
-        is_correct: isThirdCorrect,
-      },
-      fourth_option: {
-        text: fourthOption,
-        is_correct: isFourthCorrect,
-      },
+      first_option: firstOption,
+      second_option: secondOption,
+      third_option: thirdOption,
+      fourth_option: fourthOption,
+      correct_answer: correctAnswer,
       point: parseInt(point),
     };
 
@@ -79,12 +74,25 @@ const CreateQuestion = ({ route, navigation }) => {
   };
 
   const handleCreateQuestion = () => {
-    if (!examId) {
-      handleCreateQuestionTemp();
-      handleResetForm();
-      navigation.goBack();
+    if (examId) {
+      const questionData = {
+        exam_id: examId,
+        question_text: questionText,
+        first_option: firstOption,
+        second_option: secondOption,
+        third_option: thirdOption,
+        fourth_option: fourthOption,
+        correct_answer: correctAnswer,
+        point: parseInt(point),
+      };
+
+      dispatch(createQuestion({ questionData, token }));
+      setTrigger(true);
       return;
     }
+    handleCreateQuestionTemp();
+    handleResetForm();
+    navigation.goBack();
   };
 
   return (
@@ -163,10 +171,10 @@ const CreateQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsFirstCorrect(!isFirstCorrect);
+                setCorrectAnswer(firstOption);
               }}
             >
-              {isFirstCorrect ? (
+              {firstOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
@@ -184,10 +192,10 @@ const CreateQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsSecondCorrect(!isSecondCorrect);
+                setCorrectAnswer(secondOption);
               }}
             >
-              {isSecondCorrect ? (
+              {secondOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
@@ -205,10 +213,10 @@ const CreateQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsThirdCorrect(!isThirdCorrect);
+                setCorrectAnswer(thirdOption);
               }}
             >
-              {isThirdCorrect ? (
+              {thirdOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
@@ -226,24 +234,37 @@ const CreateQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsFourthCorrect(!isFourthCorrect);
+                setCorrectAnswer(fourthOption);
               }}
             >
-              {isFourthCorrect ? (
+              {fourthOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
               )}
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            className="mt-3 mb-10 bg-[#018675] py-2 rounded-md w-28"
-            onPress={handleCreateQuestion}
+
+          <Text
+            className={`text-xs text-red-500 mt-2 mb-2 ${
+              question?.error ? "opacity-1" : "opacity-0"
+            }`}
           >
-            <Text className="text-center capitalize font-medium text-white">
-              buat soal
-            </Text>
-          </TouchableOpacity>
+            {question?.error?.message}
+          </Text>
+
+          <TouchableOpacity
+              className="bg-[#018675] py-2 rounded-md justify-center items-center w-32"
+              onPress={handleCreateQuestion}
+            >
+              {question?.status == "loading" ? (
+                <ActivityIndicator size="small" color="#fff" animating={true} />
+              ) : (
+                <Text className="font-medium uppercase text-white">
+                  buat soal
+                </Text>
+              )}
+            </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

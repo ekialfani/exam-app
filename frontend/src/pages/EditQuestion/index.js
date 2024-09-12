@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
 import { FontAwesome } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,8 +12,11 @@ import {
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { TextInput } from "react-native-gesture-handler";
-import { useDispatch } from "react-redux";
-import { editQuestionTemp } from "../../redux/slice/questionSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  editQuestionTemp,
+  updateQuestion,
+} from "../../redux/slice/questionSlice";
 
 const EditQuestion = ({ route, navigation }) => {
   const { question } = route.params;
@@ -20,30 +24,27 @@ const EditQuestion = ({ route, navigation }) => {
   const [isFocus, setIsFocus] = useState(false);
   const [point, setPoint] = useState(question.point || 5);
   const [questionText, setQuestionText] = useState(question.question_text);
-  const [firstOption, setFirstOption] = useState(question.first_option.text);
-  const [secondOption, setSecondOption] = useState(question.second_option.text);
-  const [thirdOption, setThirdOption] = useState(question.third_option.text);
-  const [fourthOption, setFourthOption] = useState(question.fourth_option.text);
-  const [isFirstCorrect, setIsFirstCorrect] = useState(
-    question.first_option.is_correct
-  );
-  const [isSecondCorrect, setIsSecondCorrect] = useState(
-    question.second_option.is_correct
-  );
-  const [isThirdCorrect, setIsThirdCorrect] = useState(
-    question.third_option.is_correct
-  );
-  const [isFourthCorrect, setIsFourthCorrect] = useState(
-    question.fourth_option.is_correct
-  );
+  const [firstOption, setFirstOption] = useState(question.first_option);
+  const [secondOption, setSecondOption] = useState(question.second_option);
+  const [thirdOption, setThirdOption] = useState(question.third_option);
+  const [fourthOption, setFourthOption] = useState(question.fourth_option);
+  const [correctAnswer, setCorrectAnswer] = useState(question.correct_answer);
+  const [trigger, setTrigger] = useState(false);
 
   const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const updatedQuestion = useSelector((state) => state.question);
+
+  useEffect(() => {
+    if (trigger && updatedQuestion.status === "succeeded") {
+      navigation.navigate("AdminExamDetail", { examId: question.exam_id });
+      handleResetForm();
+      setTrigger(false);
+    }
+  }, [trigger, updatedQuestion.status]);
 
   const resetOptionCorrect = () => {
-    setIsFirstCorrect(false);
-    setIsSecondCorrect(false);
-    setIsThirdCorrect(false);
-    setIsFourthCorrect(false);
+    setCorrectAnswer(null);
   };
 
   const handleResetForm = () => {
@@ -53,39 +54,48 @@ const EditQuestion = ({ route, navigation }) => {
     setSecondOption("");
     setThirdOption("");
     setFourthOption("");
-    setIsFirstCorrect(false);
-    setIsSecondCorrect(false);
-    setIsThirdCorrect(false);
-    setIsFourthCorrect(false);
+    setCorrectAnswer(null);
   };
 
-  const handleSaveQuestion = () => {
+  const handleEditQuestionTemp = () => {
     const data = {
       id: question.id,
       exam_id: question.exam_id,
       question_text: questionText,
-      first_option: {
-        text: firstOption,
-        is_correct: isFirstCorrect,
-      },
-      second_option: {
-        text: secondOption,
-        is_correct: isSecondCorrect,
-      },
-      third_option: {
-        text: thirdOption,
-        is_correct: isThirdCorrect,
-      },
-      fourth_option: {
-        text: fourthOption,
-        is_correct: isFourthCorrect,
-      },
+      first_option: firstOption,
+      second_option: secondOption,
+      third_option: thirdOption,
+      fourth_option: fourthOption,
+      correct_answer: correctAnswer,
       point: parseInt(point),
     };
 
     dispatch(editQuestionTemp(data));
     handleResetForm();
     navigation.goBack();
+  };
+
+  const handleUpdateQuestion = () => {
+    if (question.exam_id) {
+      const updatedQuestion = {
+        exam_id: question.exam_id,
+        question_text: questionText,
+        first_option: firstOption,
+        second_option: secondOption,
+        third_option: thirdOption,
+        fourth_option: fourthOption,
+        correct_answer: correctAnswer,
+        point: parseInt(point),
+      };
+
+      dispatch(
+        updateQuestion({ questionId: question.id, updatedQuestion, token })
+      );
+      setTrigger(true);
+      return;
+    }
+
+    handleEditQuestionTemp();
   };
 
   return (
@@ -164,10 +174,10 @@ const EditQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsFirstCorrect(!isFirstCorrect);
+                setCorrectAnswer(firstOption);
               }}
             >
-              {isFirstCorrect ? (
+              {firstOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
@@ -185,10 +195,10 @@ const EditQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsSecondCorrect(!isSecondCorrect);
+                setCorrectAnswer(secondOption);
               }}
             >
-              {isSecondCorrect ? (
+              {secondOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
@@ -206,10 +216,10 @@ const EditQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsThirdCorrect(!isThirdCorrect);
+                setCorrectAnswer(thirdOption);
               }}
             >
-              {isThirdCorrect ? (
+              {thirdOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
@@ -227,23 +237,34 @@ const EditQuestion = ({ route, navigation }) => {
               className="px-2 py-2"
               onPress={() => {
                 resetOptionCorrect();
-                setIsFourthCorrect(!isFourthCorrect);
+                setCorrectAnswer(fourthOption);
               }}
             >
-              {isFourthCorrect ? (
+              {fourthOption === correctAnswer ? (
                 <FontAwesome name="check-circle-o" size={18} color="#22c55e" />
               ) : (
                 <FontAwesome name="check-circle-o" size={18} color="#fff" />
               )}
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            className="mt-3 mb-10 bg-[#018675] py-2 rounded-md w-28"
-            onPress={handleSaveQuestion}
+
+          <Text
+            className={`text-xs text-red-500 mt-2 mb-2 ${
+              updatedQuestion?.error ? "opacity-1" : "opacity-0"
+            }`}
           >
-            <Text className="text-center capitalize font-medium text-white">
-              simpan
-            </Text>
+            {updatedQuestion?.error?.message}
+          </Text>
+
+          <TouchableOpacity
+            className="bg-[#018675] py-2 rounded-md justify-center items-center w-32"
+            onPress={handleUpdateQuestion}
+          >
+            {updatedQuestion.status == "loading" ? (
+              <ActivityIndicator size="small" color="#fff" animating={true} />
+            ) : (
+              <Text className="font-medium uppercase text-white">simpan</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

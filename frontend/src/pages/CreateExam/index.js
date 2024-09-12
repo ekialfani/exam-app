@@ -22,7 +22,6 @@ import {
   resetQuestionTemp,
 } from "../../redux/slice/questionSlice";
 import { createExam } from "../../redux/slice/examSlice";
-import GetCorrectAnswer from "../../utils/GetCorrectAnswer";
 
 const CreateExam = () => {
   const [title, setTitle] = useState("");
@@ -59,22 +58,12 @@ const CreateExam = () => {
         id: 1,
         exam_id: null,
         question_text: "pertanyaan 1",
-        first_option: {
-          text: "tekan untuk mengedit soal",
-          is_correct: false,
-        },
-        second_option: {
-          text: null,
-          is_correct: false,
-        },
-        third_option: {
-          text: null,
-          is_correct: false,
-        },
-        fourth_option: {
-          text: null,
-          is_correct: false,
-        },
+        first_option: "tekan untuk mengedit soal",
+        second_option: null,
+        third_option: null,
+        fourth_option: null,
+        correct_answer: null,
+        point: 5,
       };
 
       dispatch(createQuestionTemp(newQuestion));
@@ -87,11 +76,11 @@ const CreateExam = () => {
         const questionData = {
           exam_id: exam.examCreated.id,
           question_text: item.question_text,
-          first_option: item.first_option.text,
-          second_option: item.second_option.text,
-          third_option: item.third_option.text,
-          fourth_option: item.fourth_option.text,
-          correct_answer: GetCorrectAnswer(item),
+          first_option: item.first_option,
+          second_option: item.second_option,
+          third_option: item.third_option,
+          fourth_option: item.fourth_option,
+          correct_answer: item.correct_answer,
           point: parseInt(item.point),
         };
 
@@ -107,7 +96,7 @@ const CreateExam = () => {
 
       setTrigger(false);
     }
-  }, [trigger, exam.status, GetCorrectAnswer]);
+  }, [trigger, exam.status]);
 
   const handleResetForm = () => {
     setTitle("");
@@ -222,60 +211,60 @@ const CreateExam = () => {
                 <View className="bg-white mt-3 px-3 py-2 rounded-md flex-row justify-between items-center shadow-md">
                   <View>
                     <Text className="font-medium">{item.question_text}</Text>
-                    {!item.second_option.text ? (
+                    {!item.second_option ? (
                       <Text className="text-xs text-slate-500 mt-1">
-                        {item.first_option.text}
+                        {item.first_option}
                       </Text>
                     ) : (
                       <View className="flex-row items-center mb-1 mt-1">
-                        {item.first_option.is_correct ? (
+                        {item.first_option == item.correct_answer ? (
                           <Octicons name="dot-fill" size={15} color="#22c55e" />
                         ) : (
                           <Octicons name="dot-fill" size={15} color="#ef4444" />
                         )}
 
                         <Text className="text-xs text-slate-500 ml-2">
-                          {item.first_option.text}
+                          {item.first_option}
                         </Text>
                       </View>
                     )}
 
-                    {item.second_option.text && (
+                    {item.second_option && (
                       <View className="flex-row items-center mb-1">
-                        {item.second_option.is_correct ? (
+                        {item.second_option == item.correct_answer ? (
                           <Octicons name="dot-fill" size={15} color="#22c55e" />
                         ) : (
                           <Octicons name="dot-fill" size={15} color="#ef4444" />
                         )}
 
                         <Text className="text-xs text-slate-500 ml-2">
-                          {item.second_option.text}
+                          {item.second_option}
                         </Text>
                       </View>
                     )}
-                    {item.third_option.text && (
+                    {item.third_option && (
                       <View className="flex-row items-center mb-1">
-                        {item.third_option.is_correct ? (
+                        {item.third_option == item.correct_answer ? (
                           <Octicons name="dot-fill" size={15} color="#22c55e" />
                         ) : (
                           <Octicons name="dot-fill" size={15} color="#ef4444" />
                         )}
 
                         <Text className="text-xs text-slate-500 ml-2">
-                          {item.third_option.text}
+                          {item.third_option}
                         </Text>
                       </View>
                     )}
-                    {item.fourth_option.text && (
+                    {item.fourth_option && (
                       <View className="flex-row items-center">
-                        {item.fourth_option.is_correct ? (
+                        {item.fourth_option == item.correct_answer ? (
                           <Octicons name="dot-fill" size={15} color="#22c55e" />
                         ) : (
                           <Octicons name="dot-fill" size={15} color="#ef4444" />
                         )}
 
                         <Text className="text-xs text-slate-500 ml-2">
-                          {item.fourth_option.text}
+                          {item.fourth_option}
                         </Text>
                       </View>
                     )}
@@ -283,7 +272,7 @@ const CreateExam = () => {
 
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate("Edit Soal", { question: item })
+                      navigation.navigate("EditQuestion", { question: item })
                     }
                   >
                     <AntDesign name="edit" size={21} color="#FCA428" />
@@ -296,7 +285,7 @@ const CreateExam = () => {
           <TouchableOpacity
             className="border-2 border-dashed border-slate-500 mt-3 py-2 flex-row justify-center"
             onPress={() =>
-              navigation.navigate("Buat Soal", {
+              navigation.navigate("CreateQuestion", {
                 examId: null,
                 lastQuestionId: questionsTemp[questionsTemp.length - 1].id,
               })

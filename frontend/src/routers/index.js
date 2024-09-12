@@ -6,6 +6,7 @@ import {
   CompletedExam,
   CreateExam,
   CreateQuestion,
+  EditExam,
   EditQuestion,
   ExamList,
   Home,
@@ -124,16 +125,18 @@ const Router = () => {
         }}
       />
       <Stack.Screen
-        name="Buat Soal"
+        name="CreateQuestion"
         component={CreateQuestion}
         options={{
+          title: "Buat Soal",
           headerTitleAlign: "center",
         }}
       />
       <Stack.Screen
-        name="Edit Soal"
+        name="EditQuestion"
         component={EditQuestion}
         options={{
+          title: "Edit Soal",
           headerTitleAlign: "center",
         }}
       />
@@ -144,6 +147,11 @@ const Router = () => {
           title: "Detail Ujian",
           headerTitleAlign: "center",
         }}
+      />
+      <Stack.Screen
+        name="EditExam"
+        component={EditExam}
+        options={{ title: "Edit Ujian", headerTitleAlign: "center" }}
       />
     </Stack.Navigator>
   );

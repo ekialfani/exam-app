@@ -9,6 +9,7 @@ import Setting from "./Setting";
 import CreateQuestion from "./CreateQuestion";
 import EditQuestion from "./EditQuestion";
 import AdminExamDetail from "./AdminExamDetail";
+import EditExam from "./EditExam";
 
 export {
   Home,
@@ -22,4 +23,5 @@ export {
   CreateQuestion,
   EditQuestion,
   AdminExamDetail,
+  EditExam,
 };
