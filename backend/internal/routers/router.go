@@ -14,6 +14,7 @@ func StartServer() *gin.Engine {
 	{
 		lecturerRouter.POST("/register", controllers.LecturerRegister)
 		lecturerRouter.Use(middlewares.Authentication())
+		lecturerRouter.GET("/:lecturerId", controllers.GetLecturerById)
 		lecturerRouter.PUT("/:lecturerId", middlewares.LecturerAuthorization(), controllers.UpdateLecturer)
 		lecturerRouter.DELETE("/:lecturerId", middlewares.LecturerAuthorization(), controllers.DeleteLecturer)
 	}

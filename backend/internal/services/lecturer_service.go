@@ -9,6 +9,7 @@ import (
 
 type lecturerServiceRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
+	GetLecturerById(uint) (*models.LecturerResponse, error_utils.ErrorMessage)
 	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
 	DeleteLecturer(uint) (string, error_utils.ErrorMessage)
 }
@@ -25,6 +26,16 @@ func (ls *lecturerService) Register(lecturerRequest *models.Lecturer) (*models.L
 	lecturerRequest.Password = bcrypt_utils.HashPassword([]byte(lecturerRequest.Password))
 
 	lecturerResponse, err := repository.LecturerRepository.Register(lecturerRequest)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return lecturerResponse, nil
+}
+
+func (ls *lecturerService) GetLecturerById(lecturerId uint) (*models.LecturerResponse, error_utils.ErrorMessage) {
+	lecturerResponse, err := repository.LecturerRepository.GetLecturerById(lecturerId)
 
 	if err != nil {
 		return nil, err

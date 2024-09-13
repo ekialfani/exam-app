@@ -39,6 +39,25 @@ func LecturerRegister(context *gin.Context) {
 	context.JSON(http.StatusCreated, lecturerResponse)
 }
 
+func GetLecturerById(context *gin.Context) {
+	lecturerId, err := strconv.Atoi(context.Param("lecturerId"))
+
+	if err != nil {
+		errMessage := error_utils.BadRequest("Parameter tidak sesuai")
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	lecturerResponse, errMessage := services.LecturerService.GetLecturerById(uint(lecturerId))
+
+	if errMessage != nil {
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	context.JSON(http.StatusOK, lecturerResponse)
+}
+
 func UpdateLecturer(context *gin.Context) {
 	contentType := header_value_utils.GetContentType(context, "Content-Type")
 	lecturerId, _ := strconv.Atoi(context.Param("lecturerId"))
