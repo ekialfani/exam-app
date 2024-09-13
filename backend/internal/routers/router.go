@@ -48,6 +48,7 @@ func StartServer() *gin.Engine {
 	{
 		studentRouter.POST("/register", controllers.StudentRegister)
 		studentRouter.Use(middlewares.Authentication())
+		studentRouter.GET("/:studentId", controllers.GetStudentById)
 		studentRouter.PUT("/:studentId", middlewares.StudentAuthorization(), controllers.UpdateStudent)
 		studentRouter.DELETE("/:studentId", middlewares.StudentAuthorization(), controllers.DeleteStudent)
 	}

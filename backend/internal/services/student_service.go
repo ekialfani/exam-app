@@ -9,6 +9,7 @@ import (
 
 type studentServiceRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
+	GetStudentById(uint) (*models.StudentResponse, error_utils.ErrorMessage)
 	UpdateStudent(*models.UpdateStudent, uint) (*models.StudentResponse, error_utils.ErrorMessage)
 	DeleteStudent(uint) (string, error_utils.ErrorMessage)
 }
@@ -25,6 +26,16 @@ func (ss *studentService) Register(studentRequest *models.Student) (*models.Stud
 	studentRequest.Password = bcrypt_utils.HashPassword([]byte(studentRequest.Password))
 
 	studentResponse, err := repository.StudentRepository.Register(studentRequest)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return studentResponse, nil
+}
+
+func (ss *studentService) GetStudentById(studentId uint) (*models.StudentResponse, error_utils.ErrorMessage) {
+	studentResponse, err := repository.StudentRepository.GetStudentById(studentId)
 
 	if err != nil {
 		return nil, err

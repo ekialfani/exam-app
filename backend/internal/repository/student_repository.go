@@ -9,6 +9,7 @@ import (
 
 type studentDomainRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
+	GetStudentById(uint) (*models.StudentResponse, error_utils.ErrorMessage)
 	UpdateStudent(*models.UpdateStudent, uint) (*models.StudentResponse, error_utils.ErrorMessage)
 	DeleteStudent(uint) (string, error_utils.ErrorMessage)
 }
@@ -37,6 +38,34 @@ func (sd *studenDomain) Register(studentRequest *models.Student) (*models.Studen
 		Role: studentRequest.Role,
 		CreatedAt: studentRequest.CreatedAt,
 		UpdatedAt: studentRequest.UpdatedAt,
+	}
+
+	return studentResponse, nil
+}
+
+func (sd *studenDomain) GetStudentById(studentId uint) (*models.StudentResponse, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var student *models.Student
+
+	err := db.First(&student, studentId).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	var studentResponse = &models.StudentResponse{
+		ID: student.ID,
+		FullName: student.FullName,
+		Nim: student.Nim,
+		DateOfBirth: student.DateOfBirth,
+		Gender: student.Gender,
+		Major: student.Major,
+		Semester: student.Semester,
+		Class: student.Class,
+		Email: student.Email,
+		Role: student.Role,
+		CreatedAt: student.CreatedAt,
+		UpdatedAt: student.UpdatedAt,
 	}
 
 	return studentResponse, nil

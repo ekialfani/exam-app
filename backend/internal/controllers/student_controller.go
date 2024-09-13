@@ -39,6 +39,25 @@ func StudentRegister(context *gin.Context) {
 	context.JSON(http.StatusOK, studentResponse)
 }
 
+func GetStudentById(context *gin.Context) {
+	studentId, err := strconv.Atoi(context.Param("studentId"))
+
+	if err != nil {
+		errMessage := error_utils.BadRequest("Parameter tidak sesuai")
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	studentResponse, errMessage := services.StudentService.GetStudentById(uint(studentId))
+
+	if errMessage != nil {
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	context.JSON(http.StatusOK, studentResponse)
+}
+
 func UpdateStudent(context *gin.Context) {
 	studentId, _ := strconv.Atoi(context.Param("studentId"))
 	contentType := header_value_utils.GetContentType(context, "Content-Type")
