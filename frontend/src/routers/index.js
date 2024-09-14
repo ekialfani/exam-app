@@ -17,6 +17,7 @@ import {
   Setting,
   SplashScreen,
   ExamList,
+  ExamDetail,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -162,7 +163,18 @@ const Router = () => {
       <Stack.Screen
         name="EditExam"
         component={EditExam}
-        options={{ title: "Edit Ujian", headerTitleAlign: "center" }}
+        options={{
+          title: "Edit Ujian",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="ExamDetail"
+        component={ExamDetail}
+        options={{
+          title: "Detail Ujian",
+          headerTitleAlign: "center",
+        }}
       />
     </Stack.Navigator>
   );

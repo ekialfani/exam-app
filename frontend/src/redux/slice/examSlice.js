@@ -63,6 +63,27 @@ export const getExamById = createAsyncThunk(
   }
 );
 
+export const getExamByToken = createAsyncThunk(
+  "exam/get-exam-by-token",
+  async ({ examToken, token }) => {
+    try {
+      const response = await axios.get(
+        `${CONFIG.apiUrl}:8080/exams/token/${examToken}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 export const updateExam = createAsyncThunk(
   "exam/update-exam",
   async ({ examId, updatedExam, token }) => {
@@ -85,11 +106,34 @@ export const updateExam = createAsyncThunk(
   }
 );
 
+export const createExamAssignment = createAsyncThunk(
+  "exam-assignment/create",
+  async ({ examId, token }) => {
+    try {
+      const response = await axios.post(
+        `${CONFIG.apiUrl}:8080/exam-assignments/`,
+        { exam_id: examId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   examCreated: null,
   exam: null,
   exams: null,
+  examAssignment: null,
   error: null,
 };
 
@@ -138,6 +182,19 @@ const examSlice = createSlice({
         state.status = "failed";
         state.error = action.error;
       })
+      .addCase(getExamByToken.pending, (state) => {
+        state.status = "loading";
+        state.exam = null;
+        state.error = null;
+      })
+      .addCase(getExamByToken.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.exam = action.payload;
+      })
+      .addCase(getExamByToken.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
       .addCase(updateExam.pending, (state) => {
         state.status = "loading";
         state.exam = null;
@@ -148,6 +205,19 @@ const examSlice = createSlice({
         state.exam = action.payload;
       })
       .addCase(updateExam.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(createExamAssignment.pending, (state) => {
+        state.status = "loading";
+        state.examAssignment = null;
+        state.error = null;
+      })
+      .addCase(createExamAssignment.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.examAssignment = action.payload;
+      })
+      .addCase(createExamAssignment.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });

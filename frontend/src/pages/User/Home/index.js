@@ -2,6 +2,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ScrollView,
@@ -14,6 +15,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import DecodeJwtToken from "../../../utils/DecodeJwtToken";
 import { getStudentById } from "../../../redux/slice/studentSlice";
+import {
+  createExamAssignment,
+  getExamByToken,
+} from "../../../redux/slice/examSlice";
 
 const data = [
   {
@@ -47,17 +52,42 @@ const data = [
 
 const Home = () => {
   const [examToken, setExamToken] = useState("");
+  const [trigger, setTrigger] = useState(false);
+  const [isExamExist, setIsExamExist] = useState(false);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const token = useSelector((state) => state.auth.token);
   const student = useSelector((state) => state.student);
+  const exam = useSelector((state) => state.exam);
 
   useEffect(() => {
     const parsedToken = DecodeJwtToken(token);
     dispatch(getStudentById({ studentId: parsedToken?.id, token }));
   }, [token, dispatch]);
+
+  const handleExamClaim = () => {
+    dispatch(getExamByToken({ examToken, token }));
+    setTrigger(true);
+  };
+
+  useEffect(() => {
+    if (trigger && exam.status === "succeeded") {
+      dispatch(createExamAssignment({ examId: exam?.exam?.id, token }));
+      setIsExamExist(true);
+      setTrigger(false);
+    }
+  }, [trigger, exam.status, dispatch]);
+
+  useEffect(() => {
+    if (isExamExist && exam.status === "succeeded") {
+      navigation.navigate("ExamDetail", {
+        examId: exam?.examAssignment?.exam_id,
+      });
+      setIsExamExist(false);
+    }
+  }, [isExamExist, exam.status]);
 
   return (
     <ScrollView>
@@ -91,10 +121,24 @@ const Home = () => {
               value={examToken}
               onChangeText={(text) => setExamToken(text)}
             />
-            <TouchableOpacity className="bg-[#018675] px-5 py-2.5 rounded-md">
-              <Text className="text-white font-medium">kirim</Text>
+            <TouchableOpacity
+              className="bg-[#018675] w-16 items-center py-2.5 rounded-md"
+              onPress={handleExamClaim}
+            >
+              {exam.status === "loading" ? (
+                <ActivityIndicator animating={true} color="#fff" />
+              ) : (
+                <Text className="text-white font-medium">kirim</Text>
+              )}
             </TouchableOpacity>
           </View>
+          <Text
+            className={`text-xs text-red-500 mt-2 ${
+              exam?.error ? "opacity-1" : "opacity-0"
+            }`}
+          >
+            Error: {exam?.error?.message}
+          </Text>
         </View>
       </View>
 

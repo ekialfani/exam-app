@@ -18,7 +18,7 @@ export const getStudentById = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      return error.response.data;
+      throw error.response.data;
     }
   }
 );
