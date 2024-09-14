@@ -55,10 +55,11 @@ const MainPage = () => {
   return (
     <Tab.Navigator tabBar={(props) => <BottomNavigator {...props} />}>
       <Tab.Screen
-        name="Beranda"
+        name="Home"
         component={Home}
         options={{
-          headerTitleAlign: "center",
+          title: "Beranda",
+          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -72,9 +73,12 @@ const MainPage = () => {
         options={{ headerTitleAlign: "center" }}
       />
       <Tab.Screen
-        name="Pengaturan"
+        name="Setting"
         component={Setting}
-        options={{ headerTitleAlign: "center" }}
+        options={{
+          title: "Pengaturan",
+          headerTitleAlign: "center",
+        }}
       />
     </Tab.Navigator>
   );
