@@ -4,13 +4,13 @@ import CreateQuestion from "./CreateQuestion";
 import Dashboard from "./Dashboard";
 import EditExam from "./EditExam";
 import EditQuestion from "./EditQuestion";
-import ExamList from "./ExamList";
+import ExamCreatedList from "./ExamCreatedList";
 import Report from "./Report";
 
 export {
   Dashboard,
   CreateExam,
-  ExamList,
+  ExamCreatedList,
   Report,
   CreateQuestion,
   EditExam,

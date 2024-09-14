@@ -3,19 +3,20 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   AdminExamDetail,
+  ExamCreatedList,
   CompletedExam,
   CreateExam,
   CreateQuestion,
   Dashboard,
   EditExam,
   EditQuestion,
-  ExamList,
   Home,
   Login,
   Register,
   Report,
   Setting,
   SplashScreen,
+  ExamList,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -38,9 +39,12 @@ const AdminPage = () => {
         options={{ headerTitleAlign: "center" }}
       />
       <Tab.Screen
-        name="Daftar Ujian"
-        component={ExamList}
-        options={{ headerTitleAlign: "center" }}
+        name="ExamCreatedList"
+        component={ExamCreatedList}
+        options={{
+          title: "Daftar Ujian",
+          headerTitleAlign: "center",
+        }}
       />
       <Tab.Screen
         name="Laporan"
@@ -63,9 +67,12 @@ const MainPage = () => {
         }}
       />
       <Tab.Screen
-        name="Daftar Ujian"
+        name="ExamList"
         component={ExamList}
-        options={{ headerTitleAlign: "center" }}
+        options={{
+          title: "Daftar Ujian",
+          headerTitleAlign: "center",
+        }}
       />
       <Tab.Screen
         name="Selesai"

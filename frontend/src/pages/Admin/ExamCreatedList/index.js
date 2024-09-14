@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllExams } from "../../../redux/slice/examSlice";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 
-const ExamList = () => {
+const ExamCreatedList = () => {
   const token = useSelector((state) => state.auth.token);
   const exam = useSelector((state) => state.exam);
 
@@ -78,4 +78,4 @@ const ExamList = () => {
   );
 };
 
-export default ExamList;
+export default ExamCreatedList;
