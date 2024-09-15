@@ -86,6 +86,7 @@ const Home = () => {
         examId: exam?.examAssignment?.exam_id,
       });
       setIsExamExist(false);
+      setExamToken("")
     }
   }, [isExamExist, exam.status]);
 
