@@ -128,12 +128,34 @@ export const createExamAssignment = createAsyncThunk(
   }
 );
 
+export const getAllExamAssignments = createAsyncThunk(
+  "exam-assignment/get-all-exam-assignments",
+  async ({ token }) => {
+    try {
+      const response = await axios.get(
+        `${CONFIG.apiUrl}:8080/exam-assignments/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   examCreated: null,
   exam: null,
   exams: null,
   examAssignment: null,
+  examAssignments: null,
   error: null,
 };
 
@@ -218,6 +240,19 @@ const examSlice = createSlice({
         state.examAssignment = action.payload;
       })
       .addCase(createExamAssignment.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(getAllExamAssignments.pending, (state) => {
+        state.status = "loading";
+        state.examAssignments = null;
+        state.error = null;
+      })
+      .addCase(getAllExamAssignments.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.examAssignments = action.payload;
+      })
+      .addCase(getAllExamAssignments.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });
