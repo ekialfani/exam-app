@@ -9,11 +9,13 @@ import {
   ParseDateToIndonesianFormat,
   ParseTimeToIndonesianFormat,
 } from "../../../utils";
+import { useNavigation } from "@react-navigation/native";
 
 const ExamDetail = ({ route }) => {
   const { examId } = route.params;
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const token = useSelector((state) => state.auth.token);
   const exam = useSelector((state) => state.exam);
@@ -67,7 +69,14 @@ const ExamDetail = ({ route }) => {
               </Text>
             </View>
           </View>
-          <TouchableOpacity className="bg-[#018675] w-20 py-2 rounded-md mt-5">
+          <TouchableOpacity
+            className="bg-[#018675] w-20 py-2 rounded-md mt-5"
+            onPress={() =>
+              navigation.navigate("ExamAttemp", {
+                exam: exam?.exam
+              })
+            }
+          >
             <Text className="text-center capitalize font-medium text-white">
               mulai
             </Text>

@@ -18,6 +18,7 @@ import {
   SplashScreen,
   ExamList,
   ExamDetail,
+  ExamAttemp,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -175,6 +176,16 @@ const Router = () => {
           title: "Detail Ujian",
           headerTitleAlign: "center",
         }}
+      />
+      <Stack.Screen
+        name="ExamAttemp"
+        component={ExamAttemp}
+        options={({ route }) => ({
+          title: route.params.examTitle
+            ? route.params.examTitle
+            : "Ujian Berlangsung",
+          headerTitleAlign: "center",
+        })}
       />
     </Stack.Navigator>
   );
