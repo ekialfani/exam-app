@@ -42,8 +42,8 @@ const Setting = () => {
     <View className="items-center mt-5">
       <View className="w-5/6 bg-white p-5 rounded-md shadow-md">
         <View className="flex-row items-center pb-6 border-b border-slate-300">
-          <View className="w-12 h-12 border-2 border-slate-500 rounded-full items-center justify-center">
-            <Text className="text-2xl font-bold uppercase">
+          <View className="w-12 h-12 border-2 border-slate-300 bg-[#018675] rounded-full items-center justify-center">
+            <Text className="text-2xl font-bold uppercase text-white">
               {student?.student?.full_name?.charAt(0)}
             </Text>
           </View>
@@ -57,7 +57,14 @@ const Setting = () => {
           </View>
         </View>
 
-        <TouchableOpacity className="py-3 flex-row items-center justify-between border-b border-slate-300">
+        <TouchableOpacity
+          className="py-3 flex-row items-center justify-between border-b border-slate-300"
+          onPress={() =>
+            navigation.navigate("UserProfile", {
+              studentId: student?.student.id,
+            })
+          }
+        >
           <View className="flex-row items-center">
             <FontAwesome name="user-circle" size={20} />
             <Text className="capitalize ml-2 font-medium">

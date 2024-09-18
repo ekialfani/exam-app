@@ -19,6 +19,7 @@ import {
   ExamList,
   ExamDetail,
   ExamAttemp,
+  UserProfile,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -186,6 +187,11 @@ const Router = () => {
             : "Ujian Berlangsung",
           headerTitleAlign: "center",
         })}
+      />
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfile}
+        options={{ title: "Profil Saya", headerTitleAlign: "center" }}
       />
     </Stack.Navigator>
   );
