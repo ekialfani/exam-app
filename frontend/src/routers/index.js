@@ -20,6 +20,7 @@ import {
   ExamDetail,
   ExamAttemp,
   UserProfile,
+  EditUserProfile,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -192,6 +193,11 @@ const Router = () => {
         name="UserProfile"
         component={UserProfile}
         options={{ title: "Profil Saya", headerTitleAlign: "center" }}
+      />
+      <Stack.Screen
+        name="EditUserProfile"
+        component={EditUserProfile}
+        options={{ title: "Edit Profil", headerTitleAlign: "center" }}
       />
     </Stack.Navigator>
   );

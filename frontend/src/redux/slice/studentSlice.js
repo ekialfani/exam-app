@@ -23,6 +23,28 @@ export const getStudentById = createAsyncThunk(
   }
 );
 
+export const updateStudent = createAsyncThunk(
+  "student/update",
+  async ({ studentId, updatedStudent, token }) => {
+    try {
+      const response = await axios.put(
+        `${CONFIG.apiUrl}:8080/students/${studentId}`,
+        updatedStudent,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   student: null,
@@ -45,6 +67,19 @@ const studentSlice = createSlice({
       })
       .addCase(getStudentById.rejected, (state, action) => {
         state.state = "failed";
+        state.error = action.error;
+      })
+      .addCase(updateStudent.pending, (state) => {
+        state.status = "loading";
+        state.student = null;
+        state.error = null;
+      })
+      .addCase(updateStudent.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.student = action.payload;
+      })
+      .addCase(updateStudent.rejected, (state, action) => {
+        state.status = "failed";
         state.error = action.error;
       });
   },
