@@ -19,6 +19,7 @@ type Exam struct {
 	Token string `json:"token" form:"token"`
 	Questions []Question
 	ExamAssignments []ExamAssignment `gorm:"many2many:exam_assignments;"`
+	ExamResults []ExamResult `gorm:"many2many:exam_results;"`
 }
 
 func (e *Exam) Validate() error_utils.ErrorMessage {

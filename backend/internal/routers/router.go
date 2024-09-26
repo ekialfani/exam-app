@@ -61,5 +61,11 @@ func StartServer() *gin.Engine {
 		examAssignmentRouter.DELETE("/:examId", middlewares.ExamAssignmentAuthorization(), controllers.DeleteExamAssignment)
 	}
 
+	examResultRouter := router.Group("exam-results")
+	{
+		examResultRouter.Use(middlewares.Authentication())
+		examResultRouter.POST("/", controllers.CreateExamResult)
+	}
+
 	return router
 }
