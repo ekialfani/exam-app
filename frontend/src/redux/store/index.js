@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import examReducer from "../slice/examSlice";
 import questionReducer from "../slice/questionSlice";
 import studentReducer from "../slice/studentSlice";
+import lecturerReducer from "../slice/lecturerSlice";
 
 const persistConfig = {
   key: "root",
@@ -16,6 +17,7 @@ const rootReducers = combineReducers({
   exam: examReducer,
   question: questionReducer,
   student: studentReducer,
+  lecturer: lecturerReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducers);

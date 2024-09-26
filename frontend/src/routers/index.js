@@ -34,7 +34,8 @@ const AdminPage = () => {
         name="Dashboard"
         component={Dashboard}
         options={{
-          headerTitleAlign: "center",
+          title: "Dashboard",
+          headerShown: false,
         }}
       />
       <Tab.Screen
