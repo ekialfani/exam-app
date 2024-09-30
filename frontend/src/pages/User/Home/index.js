@@ -6,7 +6,6 @@ import {
   FlatList,
   Image,
   ScrollView,
-  StatusBar,
   Text,
   TextInput,
   TouchableOpacity,
@@ -92,7 +91,6 @@ const Home = () => {
 
   return (
     <ScrollView>
-      {/* <StatusBar barStyle="light-content" /> */}
       <View className="bg-[#018675] h-[35vh] px-5 relative">
         <Text className="text-2xl mt-12 text-white font-medium">
           Selamat Datang

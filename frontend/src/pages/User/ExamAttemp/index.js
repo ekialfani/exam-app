@@ -1,14 +1,19 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  calculateExamResult,
+  createExamResult,
+  createUserAnswerTemp,
+  resetUserAnswerTemp,
+} from "../../../redux/slice/examResultSlice";
+import DecodeJwtToken from "../../../utils/DecodeJwtToken";
 
-const questions = [];
-
-const ExamAttemp = ({ route }) => {
+const ExamAttemp = ({ route, navigation }) => {
   // Utility function untuk menghitung rentang waktu
   const calculateTimeRemaining = (startTime, endTime) => {
     const start = new Date(startTime).getTime();
@@ -33,10 +38,14 @@ const ExamAttemp = ({ route }) => {
     return () => clearInterval(interval);
   };
 
-  const navigation = useNavigation();
   const { exam } = route.params;
   const [answer, setAnswer] = useState("");
   const [index, setIndex] = useState(0);
+
+  const dispatch = useDispatch();
+  const result = useSelector((state) => state.result);
+  const token = useSelector((state) => state.auth.token);
+  const [trigger, setTrigger] = useState(false);
 
   // Menginisialisasi start dan end time
   const startTime = new Date(exam?.start_time);
@@ -69,25 +78,62 @@ const ExamAttemp = ({ route }) => {
     navigation.setOptions({ title: exam.title });
   }, [navigation, exam]);
 
+  useEffect(() => {
+    if (trigger && result.status === "succeeded") {
+      dispatch(resetUserAnswerTemp());
+      navigation.navigate("ExamResult", { result: result?.examResult });
+      setTrigger(false);
+    }
+  }, [trigger, result.status]);
+
   const handleAnswerTemp = (question) => {
-    const data = {
+    const answerData = {
       id: question.id,
       exam_id: question?.exam_id,
       question_text: question.question_text,
       first_option: question.first_option,
       second_option: question.second_option,
       third_option: question.third_option,
+      point: question.point,
       user_answer: answer,
+      correct_answer: question.correct_answer,
+      index: index,
     };
 
-    const isQuestionExist = questions.find((item) => item.id === question.id);
+    dispatch(createUserAnswerTemp({ answerData }));
+  };
 
-    if (isQuestionExist) {
-      questions[index] = data;
-      return;
+  const handlePrevButton = () => {
+    setAnswer(result?.userAnswersTemp[index - 1]?.user_answer);
+    setIndex(index - 1);
+    handleAnswerTemp(exam?.Questions[index]);
+  };
+
+  const handleNextButton = () => {
+    setAnswer(result?.userAnswersTemp[index + 1]?.user_answer);
+    setIndex(index + 1);
+    handleAnswerTemp(exam?.Questions[index]);
+  };
+
+  useEffect(() => {
+    if (result.calculationStatus === "succeeded") {
+      const parsedToken = DecodeJwtToken(token);
+      const examResult = {
+        student_id: parsedToken.id,
+        exam_id: exam.id,
+        grade: result?.calculationResult?.grade,
+        total_correct: result?.calculationResult?.total_correct,
+        total_incorrect: result?.calculationResult?.total_incorrect,
+        exam_date: new Date(),
+      };
+
+      dispatch(createExamResult({ examResult, token }));
+      setTrigger(true);
     }
+  }, [result.calculationStatus]);
 
-    questions.push(data);
+  const handleSubmitAnswer = () => {
+    dispatch(calculateExamResult());
   };
 
   return (
@@ -214,7 +260,7 @@ const ExamAttemp = ({ route }) => {
           {index > 0 ? (
             <TouchableOpacity
               className="w-20 border-2 opacity-100 border-[#018675] py-1.5 rounded-md"
-              onPress={() => setIndex(index - 1)}
+              onPress={handlePrevButton}
             >
               <Text className="capitalize text-[#018675] font-medium text-center">
                 kembali
@@ -224,10 +270,13 @@ const ExamAttemp = ({ route }) => {
             <View className="w-20" />
           )}
 
-          {index === exam.Questions.length - 1 ? (
+          {index === exam?.Questions?.length - 1 ? (
             <TouchableOpacity
               className="bg-[#018675] w-20 py-2.5 rounded-md"
-              onPress={() => console.log("berhasil dikirim")}
+              onPress={() => {
+                handleAnswerTemp(exam?.Questions[index]);
+                handleSubmitAnswer();
+              }}
             >
               <Text className="capitalize text-white font-medium text-center">
                 kirim
@@ -236,10 +285,7 @@ const ExamAttemp = ({ route }) => {
           ) : (
             <TouchableOpacity
               className="bg-[#018675] w-20 py-2.5 rounded-md"
-              onPress={() => {
-                setIndex(index + 1);
-                handleAnswerTemp(exam.Questions[index]);
-              }}
+              onPress={handleNextButton}
             >
               <Text className="capitalize text-white font-medium text-center">
                 lanjut

@@ -6,6 +6,7 @@ import examReducer from "../slice/examSlice";
 import questionReducer from "../slice/questionSlice";
 import studentReducer from "../slice/studentSlice";
 import lecturerReducer from "../slice/lecturerSlice";
+import examResultReducer from "../slice/examResultSlice";
 
 const persistConfig = {
   key: "root",
@@ -18,6 +19,7 @@ const rootReducers = combineReducers({
   question: questionReducer,
   student: studentReducer,
   lecturer: lecturerReducer,
+  result: examResultReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducers);
