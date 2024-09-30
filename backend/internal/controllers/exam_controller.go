@@ -43,11 +43,11 @@ func CreateExam(context *gin.Context) {
 	context.JSON(http.StatusOK, examResponse)
 }
 
-func GetAllExams(context *gin.Context) {
+func GetAllExamsByLecturerId(context *gin.Context) {
 	userData := context.MustGet("userData").(jwt.MapClaims)
 	var lecturerID uint = uint(userData["id"].(float64))
 
-	examsResponse, err := services.ExamService.GetAllExams(lecturerID)
+	examsResponse, err := services.ExamService.GetAllExamsByLecturerId(lecturerID)
 
 	if err != nil {
 		context.JSON(err.StatusCode(), err)

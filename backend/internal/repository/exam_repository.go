@@ -10,7 +10,7 @@ import (
 
 type examDomainRepo interface {
 	CreateExam(*models.Exam) (*models.Exam, error_utils.ErrorMessage)
-	GetAllExams(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	GetAllExamsByLecturerId(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
@@ -30,7 +30,7 @@ func (ed *examDomain) CreateExam(examRequest *models.Exam) (*models.Exam, error_
 	return examRequest, nil
 }
 
-func (ed *examDomain) GetAllExams(lecturerID uint) ([]*models.ExamResponse, error_utils.ErrorMessage) {
+func (ed *examDomain) GetAllExamsByLecturerId(lecturerID uint) ([]*models.ExamResponse, error_utils.ErrorMessage) {
 	db := database.GetDB()
 	var exams []*models.Exam
 	var examsResponse []*models.ExamResponse
