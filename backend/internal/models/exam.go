@@ -19,7 +19,7 @@ type Exam struct {
 	Token string `json:"token" form:"token"`
 	Questions []Question
 	ExamAssignments []ExamAssignment `gorm:"many2many:exam_assignments;"`
-	ExamResults []ExamResult `gorm:"many2many:exam_results;"`
+	ExamResults []ExamResult `gorm:"foreignKey:ExamID"`
 }
 
 func (e *Exam) Validate() error_utils.ErrorMessage {
@@ -45,6 +45,7 @@ type ExamResponse struct {
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	Questions []Question
+	ExamResults []ExamResult
 }
 
 type ExamUpdate struct {
@@ -64,3 +65,4 @@ func (eu *ExamUpdate) Validate() error_utils.ErrorMessage {
 
 	return nil
 }
+

@@ -57,6 +57,21 @@ func GetAllExamsByLecturerId(context *gin.Context) {
 	context.JSON(http.StatusOK, examsResponse)
 }
 
+func GetAllExamReports(context *gin.Context) {
+	userData := context.MustGet("userData").(jwt.MapClaims)
+
+	var lectureId uint = uint(userData["id"].(float64))
+
+	examsResponse, err := services.ExamService.GetAllExamReports(lectureId)
+
+	if err != nil {
+		context.AbortWithStatusJSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, examsResponse)
+}
+
 func GetExamById(context *gin.Context) {
 	examId, err := strconv.Atoi(context.Param("examId"))
 

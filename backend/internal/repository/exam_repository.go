@@ -12,6 +12,7 @@ type examDomainRepo interface {
 	CreateExam(*models.Exam) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExamsByLecturerId(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	GetAllExams() ([]*models.Exam, error_utils.ErrorMessage)
+	GetAllExamReports(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
@@ -89,6 +90,51 @@ func (ed *examDomain) GetAllExams() ([]*models.Exam, error_utils.ErrorMessage) {
 	}
 
 	return exams, nil
+}
+
+func (ed *examDomain) GetAllExamReports(lecturerId uint) ([]*models.ExamResponse, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var exams []*models.Exam
+	var examReportsResponse []*models.ExamResponse
+
+	err := db.Preload("ExamResults.Student").Where("lecturer_id = ?", lecturerId).Where("status = ?", true).Find(&exams).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	for _, exam := range exams {
+		var examResults []models.ExamResult
+
+		for _, result := range exam.ExamResults {
+			examResults = append(examResults, models.ExamResult{
+				StudentID:    result.StudentID,
+				Grade:        result.Grade,
+				TotalCorrect: result.TotalCorrect,
+				TotalIncorrect: result.TotalIncorrect,
+				ExamDate:     result.ExamDate,
+			})
+		}
+
+		newExam := models.ExamResponse{
+			ID:          exam.ID,
+			LecturerID: exam.LecturerID,
+			Title:       exam.Title,
+			Description: exam.Description,
+			Status:      exam.Status,
+			StartTime:   exam.StartTime,
+			EndTime:     exam.EndTime,
+			Token:       exam.Token,
+			CreatedAt:   exam.CreatedAt,
+			UpdatedAt:   exam.UpdatedAt,
+			ExamResults: examResults,
+		}
+
+		examReportsResponse = append(examReportsResponse, &newExam)
+	}
+
+
+	return examReportsResponse, nil
 }
 
 func (ed *examDomain) GetExamById(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
