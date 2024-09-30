@@ -3,6 +3,8 @@ package main
 import (
 	"backend/internal/database"
 	"backend/internal/routers"
+	"backend/internal/services"
+	"context"
 	"log"
 	"os"
 
@@ -14,6 +16,12 @@ func init() {
 }
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	defer cancel()
+
+	go services.ScheduleExamStatusUpdater(ctx)
+
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("error loading .env file")
 	}

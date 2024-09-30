@@ -10,6 +10,7 @@ import (
 type examServiceRepo interface {
 	CreateExam(*models.Exam, uint) (*models.Exam, error_utils.ErrorMessage)
 	GetAllExamsByLecturerId(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	GetAllExams() ([]*models.Exam, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
@@ -39,6 +40,16 @@ func (es *examService) CreateExam(examRequest *models.Exam, lecturerID uint) (*m
 
 func (es *examService) GetAllExamsByLecturerId(lecturerID uint) ([]*models.ExamResponse, error_utils.ErrorMessage) {
 	examsResponse, err := repository.ExamRepository.GetAllExamsByLecturerId(lecturerID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return examsResponse, nil
+}
+
+func (es *examService) GetAllExams() ([]*models.Exam, error_utils.ErrorMessage) {
+	examsResponse, err := repository.ExamRepository.GetAllExams()
 
 	if err != nil {
 		return nil, err
