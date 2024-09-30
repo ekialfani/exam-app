@@ -6,6 +6,7 @@ import EditExam from "./EditExam";
 import EditQuestion from "./EditQuestion";
 import ExamCreatedList from "./ExamCreatedList";
 import Report from "./Report";
+import ReportDetail from "./ReportDetail";
 
 export {
   Dashboard,
@@ -16,4 +17,5 @@ export {
   EditExam,
   EditQuestion,
   AdminExamDetail,
+  ReportDetail,
 };

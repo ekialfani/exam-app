@@ -22,6 +22,7 @@ import {
   UserProfile,
   EditUserProfile,
   ExamResult,
+  ReportDetail,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -205,6 +206,14 @@ const Router = () => {
         name="ExamResult"
         component={ExamResult}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ReportDetail"
+        component={ReportDetail}
+        options={{
+          title: "Detail Laporan",
+          headerTitleAlign: "center",
+        }}
       />
     </Stack.Navigator>
   );
