@@ -45,7 +45,7 @@ type ExamResponse struct {
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	Questions []Question
-	ExamResults []ExamResult
+	ExamResults []ExamResultResponse `json:"exam_results"`
 }
 
 type ExamUpdate struct {

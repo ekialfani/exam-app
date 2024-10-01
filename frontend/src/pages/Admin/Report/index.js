@@ -58,10 +58,10 @@ const Report = () => {
             <Text className="text-[13px] basis-[10%]">{index + 1}.</Text>
             <Text className="text-[13px] basis-[45%]">{item?.title}</Text>
             <Text className="text-[13px] basis-[20%]">
-              {item?.ExamResults?.length || 0}
+              {item?.exam_results?.length || 0}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("ReportDetail")}
+              onPress={() => navigation.navigate("ReportDetail", {examId: item?.id})}
             >
               <Text className="text-[13px] capitalize font-semibold">
                 lihat detail

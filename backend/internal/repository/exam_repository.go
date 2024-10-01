@@ -105,10 +105,10 @@ func (ed *examDomain) GetAllExamReports(lecturerId uint) ([]*models.ExamResponse
 	}
 
 	for _, exam := range exams {
-		var examResults []models.ExamResult
+		var examResults []models.ExamResultResponse
 
 		for _, result := range exam.ExamResults {
-			examResults = append(examResults, models.ExamResult{
+			examResults = append(examResults, models.ExamResultResponse{
 				StudentID:    result.StudentID,
 				Grade:        result.Grade,
 				TotalCorrect: result.TotalCorrect,
@@ -148,16 +148,27 @@ func (ed *examDomain) GetExamReportByExamId(examId uint) (*models.ExamResponse, 
 		return nil, error_formats.ParseError(err)
 	}
 
-	var examResults []models.ExamResult
+	var examResults []models.ExamResultResponse
 
 		for _, result := range exam.ExamResults {
-			examResults = append(examResults, models.ExamResult{
+			examResults = append(examResults, models.ExamResultResponse{
 				StudentID:    result.StudentID,
 				ExamID: result.ExamID,
 				Grade:        result.Grade,
 				TotalCorrect: result.TotalCorrect,
 				TotalIncorrect: result.TotalIncorrect,
 				ExamDate:     result.ExamDate,
+				Student: &models.StudentResponse{
+					ID: result.Student.ID,
+					FullName: result.Student.FullName,
+					Nim: result.Student.Nim,
+					DateOfBirth: result.Student.DateOfBirth,
+					Gender: result.Student.Gender,
+					Major: result.Student.Major,
+					Semester: result.Student.Semester,
+					Class: result.Student.Class,
+					Email: result.Student.Email,
+				},
 			})
 		}
 

@@ -27,3 +27,14 @@ func (er *ExamResult) Validate() error_utils.ErrorMessage {
 
 	return nil
 }
+
+type ExamResultResponse struct {
+	StudentID uint `json:"student_id"`
+	ExamID    uint     `json:"exam_id"`
+	Grade uint `json:"grade"`
+	TotalCorrect uint `json:"total_correct"`
+	TotalIncorrect uint `json:"total_incorrect"`
+	ExamDate  *time.Time `json:"exam_date"`
+	Student *StudentResponse `json:"student"`
+	Exam      *Exam    `json:"exam"`
+}
