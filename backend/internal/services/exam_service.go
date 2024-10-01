@@ -12,6 +12,7 @@ type examServiceRepo interface {
 	GetAllExamsByLecturerId(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	GetAllExams() ([]*models.Exam, error_utils.ErrorMessage)
 	GetAllExamReports(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	GetExamReportByExamId(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
@@ -67,6 +68,16 @@ func (es *examService) GetAllExamReports(lecturerId uint) ([]*models.ExamRespons
 	}
 
 	return examsResponse, nil
+}
+
+func (es *examService) GetExamReportByExamId(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
+	examReportResponse, err := repository.ExamRepository.GetExamReportByExamId(examId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return examReportResponse, nil
 }
 
 func (es *examService) GetExamById(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {

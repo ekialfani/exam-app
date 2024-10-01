@@ -13,6 +13,7 @@ type examDomainRepo interface {
 	GetAllExamsByLecturerId(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	GetAllExams() ([]*models.Exam, error_utils.ErrorMessage)
 	GetAllExamReports(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
+	GetExamReportByExamId(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
@@ -135,6 +136,46 @@ func (ed *examDomain) GetAllExamReports(lecturerId uint) ([]*models.ExamResponse
 
 
 	return examReportsResponse, nil
+}
+
+func (ed *examDomain) GetExamReportByExamId(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var exam *models.Exam
+
+	err := db.Preload("ExamResults.Student").Where("status = ?", true).First(&exam, examId).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	var examResults []models.ExamResult
+
+		for _, result := range exam.ExamResults {
+			examResults = append(examResults, models.ExamResult{
+				StudentID:    result.StudentID,
+				ExamID: result.ExamID,
+				Grade:        result.Grade,
+				TotalCorrect: result.TotalCorrect,
+				TotalIncorrect: result.TotalIncorrect,
+				ExamDate:     result.ExamDate,
+			})
+		}
+
+		examResponse := &models.ExamResponse{
+			ID:          exam.ID,
+			LecturerID: exam.LecturerID,
+			Title:       exam.Title,
+			Description: exam.Description,
+			Status:      exam.Status,
+			StartTime:   exam.StartTime,
+			EndTime:     exam.EndTime,
+			Token:       exam.Token,
+			CreatedAt:   exam.CreatedAt,
+			UpdatedAt:   exam.UpdatedAt,
+			ExamResults: examResults,
+		}
+
+	return examResponse, nil
 }
 
 func (ed *examDomain) GetExamById(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {

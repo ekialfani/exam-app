@@ -32,6 +32,7 @@ func StartServer() *gin.Engine {
 		examRouter.GET("/:examId", controllers.GetExamById)
 		examRouter.GET("/token/:examToken", controllers.GetExamByToken)
 		examRouter.GET("/reports/", middlewares.AdminAuthorization(), controllers.GetAllExamReports)
+		examRouter.GET("/reports/:examId", middlewares.AdminAuthorization(), middlewares.ExamAuthorization(), controllers.GetExamReportByExamId)
 		examRouter.PUT("/:examId", middlewares.AdminAuthorization(), middlewares.ExamAuthorization(), controllers.UpdateExam)
 		examRouter.DELETE("/:examId", middlewares.AdminAuthorization(), middlewares.ExamAuthorization(), controllers.DeleteExam)
 	}
