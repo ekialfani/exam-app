@@ -5,7 +5,7 @@ import CONFIG from "../../config";
 export const createExamResult = createAsyncThunk(
   "exam-result/create",
   async ({ examResult, token }) => {
-    console.log("data: ", examResult);
+    // console.log("data: ", examResult);
     try {
       const response = await axios.post(
         `${CONFIG.apiUrl}:8080/exam-results/`,

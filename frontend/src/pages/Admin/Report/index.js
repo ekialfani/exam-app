@@ -1,5 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
 import {
   FlatList,
   ScrollView,
@@ -7,37 +8,31 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-const exams = [
-  {
-    id: 1,
-    title: "Dasar Pemrograman",
-    participant: 20,
-  },
-  {
-    id: 2,
-    title: "Matematika Diskrit",
-    participant: 15,
-  },
-  {
-    id: 3,
-    title: "Calculus",
-    participant: 21,
-  },
-  {
-    id: 4,
-    title: "Matematika Diskrit",
-    participant: 15,
-  },
-  {
-    id: 5,
-    title: "Calculus",
-    participant: 21,
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { getAllExamReports } from "../../../redux/slice/examReportSlice";
+import { logout } from "../../../redux/slice/authSlice";
 
 const Report = () => {
   const navigation = useNavigation();
+
+  const dispatch = useDispatch();
+
+  const auth = useSelector((state) => state.auth);
+  const report = useSelector((state) => state.report);
+
+  useEffect(() => {
+    dispatch(getAllExamReports({ token: auth?.token }));
+  }, [auth.token, dispatch]);
+
+  useEffect(() => {
+    if (!auth.token) {
+      navigation.navigate("Login");
+    }
+  }, [auth.token]);
+
+  const handleUserLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <ScrollView>
@@ -57,12 +52,14 @@ const Report = () => {
       </View>
       <FlatList
         scrollEnabled={false}
-        data={exams}
+        data={report?.examReports}
         renderItem={({ item, index }) => (
           <View className="flex-row items-center justify-between px-5 border-b border-slate-300 py-4">
             <Text className="text-[13px] basis-[10%]">{index + 1}.</Text>
-            <Text className="text-[13px] basis-[45%]">{item.title}</Text>
-            <Text className="text-[13px] basis-[20%]">{item.participant}</Text>
+            <Text className="text-[13px] basis-[45%]">{item?.title}</Text>
+            <Text className="text-[13px] basis-[20%]">
+              {item?.ExamResults?.length || 0}
+            </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("ReportDetail")}
             >
@@ -73,6 +70,9 @@ const Report = () => {
           </View>
         )}
       />
+      <TouchableOpacity onPress={handleUserLogout} className="mt-5 ml-5">
+        <Text className="text-red-500">logout</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
