@@ -4,6 +4,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/repository"
 	"backend/internal/utils/error_utils"
+	lcm_algorithm_utils "backend/internal/utils/lcm_algorithm"
 )
 
 type questionServiceRepo interface {
@@ -38,7 +39,10 @@ func (qs *questionService) GetQuestionsByExamId(examId uint) ([]*models.Question
 		return nil, err
 	}
 
-	return questionsResponse, nil
+	// Shuffle exam questions using the Linear Congruential Method (LCM)
+	shuffledQuestions := lcm_algorithm_utils.ShuffleQuestionsLCM(1, 3, len(questionsResponse), questionsResponse)
+
+	return shuffledQuestions, nil
 }
 
 func (qs *questionService) UpdateQuestion(updatedQuestion *models.UpdateQuestion, questionId uint) (*models.Question, error_utils.ErrorMessage) {
