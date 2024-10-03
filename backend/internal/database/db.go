@@ -31,13 +31,14 @@ func StartDB() {
 
 	db, err = gorm.Open(mysql.Open(config), &gorm.Config{})
 
+
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	fmt.Println("berhasil terhubung ke database...")
 
-	db.Debug().AutoMigrate(models.Lecture{})
+	db.Debug().AutoMigrate(models.Lecturer{}, models.Exam{}, models.Question{}, models.Student{}, models.ExamAssignment{}, models.ExamResult{})
 }
 
 func GetDB() *gorm.DB {
