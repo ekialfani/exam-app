@@ -4,12 +4,13 @@ import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { getExamById } from "../../../redux/slice/examSlice";
+import { GetExamWithShuffledQuestions } from "../../../redux/slice/examSlice";
 import {
   ParseDateToIndonesianFormat,
   ParseTimeToIndonesianFormat,
 } from "../../../utils";
 import { useNavigation } from "@react-navigation/native";
+import { getLecturerById } from "../../../redux/slice/lecturerSlice";
 
 const ExamDetail = ({ route }) => {
   const { examId } = route.params;
@@ -19,10 +20,17 @@ const ExamDetail = ({ route }) => {
 
   const token = useSelector((state) => state.auth.token);
   const exam = useSelector((state) => state.exam);
+  const lecturer = useSelector((state) => state.lecturer);
 
   useEffect(() => {
-    dispatch(getExamById({ examId, token }));
+    dispatch(GetExamWithShuffledQuestions({ examId, token }));
   }, [examId, dispatch]);
+
+  useEffect(() => {
+    if (exam?.exam?.lecturer_id) {
+      dispatch(getLecturerById({ lecturerId: exam?.exam?.lecturer_id, token }));
+    }
+  }, [exam.exam?.lecturer_id, dispatch, token]);
 
   return (
     <View className="items-center mt-5">
@@ -39,7 +47,7 @@ const ExamDetail = ({ route }) => {
             {exam?.exam?.title}
           </Text>
           <Text className="font-medium text-slate-800">
-            {exam?.exam?.lecturer?.full_name}
+            {lecturer?.lecturer?.full_name}
           </Text>
           <Text className="text-xs text-slate-500">
             {exam?.exam?.description}
@@ -73,7 +81,7 @@ const ExamDetail = ({ route }) => {
             className="bg-[#018675] w-20 py-2 rounded-md mt-5"
             onPress={() =>
               navigation.navigate("ExamAttemp", {
-                exam: exam?.exam
+                exam: exam?.exam,
               })
             }
           >

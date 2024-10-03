@@ -84,6 +84,27 @@ export const getExamByToken = createAsyncThunk(
   }
 );
 
+export const GetExamWithShuffledQuestions = createAsyncThunk(
+  "exam/get-exam-with-shuffled-questions",
+  async ({ examId, token }) => {
+    try {
+      const response = await axios.get(
+        `${CONFIG.apiUrl}:8080/exams/shuffled-questions/${examId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 export const updateExam = createAsyncThunk(
   "exam/update-exam",
   async ({ examId, updatedExam, token }) => {
@@ -214,6 +235,19 @@ const examSlice = createSlice({
         state.exam = action.payload;
       })
       .addCase(getExamByToken.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(GetExamWithShuffledQuestions.pending, (state) => {
+        state.status = "loading";
+        state.exam = null;
+        state.error = null;
+      })
+      .addCase(GetExamWithShuffledQuestions.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.exam = action.payload;
+      })
+      .addCase(GetExamWithShuffledQuestions.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       })
