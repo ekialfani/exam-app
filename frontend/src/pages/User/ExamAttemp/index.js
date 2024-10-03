@@ -78,14 +78,6 @@ const ExamAttemp = ({ route, navigation }) => {
     navigation.setOptions({ title: exam.title });
   }, [navigation, exam]);
 
-  useEffect(() => {
-    if (trigger && result.status === "succeeded") {
-      dispatch(resetUserAnswerTemp());
-      navigation.navigate("ExamResult", { result: result?.examResult });
-      setTrigger(false);
-    }
-  }, [trigger, result.status]);
-
   const handleAnswerTemp = (question) => {
     const answerData = {
       id: question.id,
@@ -97,44 +89,56 @@ const ExamAttemp = ({ route, navigation }) => {
       point: question.point,
       user_answer: answer,
       correct_answer: question.correct_answer,
-      index: index,
     };
 
     dispatch(createUserAnswerTemp({ answerData }));
   };
 
   const handlePrevButton = () => {
-    setAnswer(result?.userAnswersTemp[index - 1]?.user_answer);
+    handleAnswerTemp(exam.Questions[index]);
+    setAnswer(result.userAnswersTemp[index - 1]?.user_answer || "");
     setIndex(index - 1);
-    handleAnswerTemp(exam?.Questions[index]);
   };
 
   const handleNextButton = () => {
-    setAnswer(result?.userAnswersTemp[index + 1]?.user_answer);
+    handleAnswerTemp(exam.Questions[index]);
+    setAnswer(result.userAnswersTemp[index + 1]?.user_answer || "");
     setIndex(index + 1);
-    handleAnswerTemp(exam?.Questions[index]);
+  };
+
+  const handleSubmitAnswer = () => {
+    handleAnswerTemp(exam.Questions[index]);
+    if (result.calculationStatus !== "succeeded") {
+      dispatch(calculateExamResult());
+    }
   };
 
   useEffect(() => {
-    if (result.calculationStatus === "succeeded") {
+    if (
+      result.calculationStatus === "succeeded" &&
+      result.examResult === null
+    ) {
       const parsedToken = DecodeJwtToken(token);
       const examResult = {
         student_id: parsedToken.id,
         exam_id: exam.id,
-        grade: result?.calculationResult?.grade,
-        total_correct: result?.calculationResult?.total_correct,
-        total_incorrect: result?.calculationResult?.total_incorrect,
+        grade: result.calculationResult.grade,
+        total_correct: result.calculationResult.total_correct,
+        total_incorrect: result.calculationResult.total_incorrect,
         exam_date: new Date(),
       };
-
       dispatch(createExamResult({ examResult, token }));
       setTrigger(true);
     }
-  }, [result.calculationStatus]);
+  }, [result.calculationStatus, result.examResult]);
 
-  const handleSubmitAnswer = () => {
-    dispatch(calculateExamResult());
-  };
+  useEffect(() => {
+    if (result.status === "succeeded" && trigger) {
+      navigation.navigate("ExamResult", { result: result.examResult });
+      dispatch(resetUserAnswerTemp());
+      setTrigger(false);
+    }
+  }, [result.status, trigger]);
 
   return (
     <ScrollView>
@@ -273,10 +277,7 @@ const ExamAttemp = ({ route, navigation }) => {
           {index === exam?.Questions?.length - 1 ? (
             <TouchableOpacity
               className="bg-[#018675] w-20 py-2.5 rounded-md"
-              onPress={() => {
-                handleAnswerTemp(exam?.Questions[index]);
-                handleSubmitAnswer();
-              }}
+              onPress={handleSubmitAnswer}
             >
               <Text className="capitalize text-white font-medium text-center">
                 kirim

@@ -5,7 +5,6 @@ import CONFIG from "../../config";
 export const createExamResult = createAsyncThunk(
   "exam-result/create",
   async ({ examResult, token }) => {
-    // console.log("data: ", examResult);
     try {
       const response = await axios.post(
         `${CONFIG.apiUrl}:8080/exam-results/`,
@@ -41,28 +40,23 @@ const examResultSlice = createSlice({
     createUserAnswerTemp: (state, action) => {
       const { answerData } = action.payload;
 
-      const isAnswerExist = state.userAnswersTemp?.find(
+      const isAnswerExist = state.userAnswersTemp.find(
         (answer) => answer.id === answerData.id
       );
 
       if (isAnswerExist) {
-        state.userAnswersTemp[answerData.index] = answerData;
-        return;
+        state.userAnswersTemp = state.userAnswersTemp.map((answer) =>
+          answer.id === answerData.id ? answerData : answer
+        );
+      } else {
+        state.userAnswersTemp.push(answerData);
       }
-
-      state.userAnswersTemp.push(answerData);
-    },
-
-    resetUserAnswerTemp: (state) => {
-      state.userAnswersTemp = [];
-      state.calculationResult = null;
-      state.calculationStatus = "idle";
     },
     calculateExamResult: (state) => {
       let grade = 0;
       let totalCorrect = 0;
 
-      state?.userAnswersTemp?.forEach((question) => {
+      state.userAnswersTemp.forEach((question) => {
         if (question.user_answer === question.correct_answer) {
           grade += question.point;
           totalCorrect++;
@@ -70,12 +64,17 @@ const examResultSlice = createSlice({
       });
 
       state.calculationResult = {
-        grade: grade,
+        grade,
         total_correct: totalCorrect,
-        total_incorrect: state?.userAnswersTemp?.length - totalCorrect,
+        total_incorrect: state.userAnswersTemp.length - totalCorrect,
       };
-
       state.calculationStatus = "succeeded";
+    },
+    resetUserAnswerTemp: (state) => {
+      state.userAnswersTemp = [];
+      state.calculationResult = null;
+      state.calculationStatus = "idle";
+      state.examResult = null;
     },
   },
   extraReducers: (builder) => {
