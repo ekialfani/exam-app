@@ -123,6 +123,25 @@ func GetExamByToken(context *gin.Context) {
 	context.JSON(http.StatusOK, examResponse)
 }
 
+func GetExamWithShuffledQuestions(context *gin.Context) {
+	examId, err := strconv.Atoi(context.Param("examId"))
+
+	if err != nil {
+		errMessage := error_utils.BadRequest("Parameter salah")
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	examResponse, errMessage := services.ExamService.GetExamWithShuffledQuestions(uint(examId))
+
+	if errMessage != nil {
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	context.JSON(http.StatusOK, examResponse)
+}
+
 func UpdateExam(context *gin.Context) {
 	contentType := header_value_utils.GetContentType(context, "Content-Type")
 	examId, _ := strconv.Atoi(context.Param("examId"))

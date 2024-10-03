@@ -4,6 +4,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/repository"
 	"backend/internal/utils/error_utils"
+	lcm_algorithm_utils "backend/internal/utils/lcm_algorithm"
 	"backend/internal/utils/token_utils"
 )
 
@@ -15,6 +16,7 @@ type examServiceRepo interface {
 	GetExamReportByExamId(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
+	GetExamWithShuffledQuestions(uint) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
@@ -96,6 +98,24 @@ func (es *examService) GetExamByToken(examToken string) (*models.Exam, error_uti
 	if err != nil {
 		return nil, err
 	}
+
+	return examResponse, nil
+}
+
+func (es *examService) GetExamWithShuffledQuestions(examId uint) (*models.Exam, error_utils.ErrorMessage) {
+	examResponse, err := repository.ExamRepository.GetExamWithShuffledQuestions(examId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(examResponse.Questions) == 0 {
+		return examResponse, nil
+	}
+
+	shuffledQuestions := lcm_algorithm_utils.ShuffleQuestionsLCM(1, 3, len(examResponse.Questions), examResponse.Questions)
+
+	examResponse.Questions = shuffledQuestions
 
 	return examResponse, nil
 }

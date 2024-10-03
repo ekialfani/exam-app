@@ -16,6 +16,7 @@ type examDomainRepo interface {
 	GetExamReportByExamId(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
+	GetExamWithShuffledQuestions(uint) (*models.Exam, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
@@ -134,7 +135,6 @@ func (ed *examDomain) GetAllExamReports(lecturerId uint) ([]*models.ExamResponse
 		examReportsResponse = append(examReportsResponse, &newExam)
 	}
 
-
 	return examReportsResponse, nil
 }
 
@@ -232,6 +232,19 @@ func (ed *examDomain) GetExamByToken(examToken string) (*models.Exam, error_util
 	var exam *models.Exam
 
 	err := db.Where("token = ?", examToken).First(&exam).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	return exam, nil
+}
+
+func (ed *examDomain) GetExamWithShuffledQuestions(examId uint) (*models.Exam, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var exam *models.Exam
+
+	err := db.Preload("Questions").First(&exam, examId).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)

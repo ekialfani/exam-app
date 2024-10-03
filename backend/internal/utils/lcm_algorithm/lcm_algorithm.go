@@ -15,8 +15,8 @@ func calculateNextLCM(a, c, m, prevXn int) int {
 	return (a*prevXn + c) % m
 }
 
-func ShuffleQuestionsLCM(a int, c int, m int, questions []*models.Question) ([]*models.Question) {
-	var shuffledQuestions []*models.Question
+func ShuffleQuestionsLCM(a int, c int, m int, questions []models.Question) ([]models.Question) {
+	var shuffledQuestions []models.Question
 	prevXn := randomNumber(m)
 
 	for i := 0; i < m; i++ {
