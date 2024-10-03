@@ -7,6 +7,7 @@ import (
 	"backend/internal/utils/header_value_utils"
 	"net/http"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,4 +37,18 @@ func CreateCompletedExam(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, completedExamResponse)
+}
+
+func GetAllCompletedExams(context *gin.Context) {
+	userData := context.MustGet("userData").(jwt.MapClaims)
+	var studentId = uint(userData["id"].(float64))
+
+	completedExamsReponse, err := services.CompletedExamService.GetAllCompletedExams(studentId)
+
+	if err != nil {
+		context.AbortWithStatusJSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, completedExamsReponse)
 }
