@@ -70,5 +70,11 @@ func StartServer() *gin.Engine {
 		examResultRouter.POST("/", controllers.CreateExamResult)
 	}
 
+	completedExamRouter := router.Group("completed-exams")
+	{
+		completedExamRouter.Use(middlewares.Authentication())
+		completedExamRouter.POST("/", controllers.CreateCompletedExam)
+	}
+
 	return router
 }

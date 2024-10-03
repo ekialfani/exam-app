@@ -21,6 +21,7 @@ type Student struct {
 	Role        string `gorm:"type:ENUM('Dosen', 'Mahasiswa'); not null" json:"role" form:"role" valid:"required~Role tidak boleh kosong"`
 	ExamAssignments []ExamAssignment `gorm:"many2many:exam_assignments;"`
 	ExamResults []ExamResult `gorm:"many2many:exam_results;"`
+	CompletedExams []CompletedExam `gorm:"many2many:completed_exams;" json:"completed_exams"`
 }
 
 func (s *Student) Validate() error_utils.ErrorMessage {

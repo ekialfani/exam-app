@@ -20,6 +20,7 @@ type Exam struct {
 	Questions []Question
 	ExamAssignments []ExamAssignment `gorm:"many2many:exam_assignments;"`
 	ExamResults []ExamResult `gorm:"foreignKey:ExamID"`
+	CompletedExams []CompletedExam `gorm:"many2many:completed_exams;" json:"completed_exams`
 }
 
 func (e *Exam) Validate() error_utils.ErrorMessage {
