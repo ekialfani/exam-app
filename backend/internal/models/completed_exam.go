@@ -11,6 +11,7 @@ type CompletedExam struct {
 	ExamID    uint     `gorm:"primaryKey" json:"exam_id" form:"exam_id" valid:"required~ID ujian tidak boleh kosong"`
 	Student   *Student `json:"student"`
 	Exam      *Exam    `json:"exam"`
+	ExamResult *ExamResult `gorm:"foreignKey:StudentID,ExamID;references:StudentID,ExamID" json:"exam_result"`
 }
 
 func (ce *CompletedExam) Validate() error_utils.ErrorMessage {

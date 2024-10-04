@@ -6,6 +6,7 @@ import (
 	"backend/internal/utils/error_utils"
 	"backend/internal/utils/header_value_utils"
 	"net/http"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -51,4 +52,23 @@ func GetAllCompletedExams(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, completedExamsReponse)
+}
+
+func GetCompletedExamByExamId(context *gin.Context) {
+	examId, err := strconv.Atoi(context.Param("examId"))
+
+	if err != nil {
+		errMessage := error_utils.BadRequest("Parameter salah")
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	completedExamResponse, errMessage := services.CompletedExamService.GetCompletedExamByExamId(uint(examId))
+
+	if errMessage != nil {
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	context.JSON(http.StatusOK, completedExamResponse)
 }

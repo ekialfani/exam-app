@@ -16,6 +16,7 @@ type ExamResult struct {
 	ExamDate  *time.Time `json:"exam_date,omitempty"`
 	Student *Student `json:"student"`
 	Exam      *Exam    `json:"exam"`
+	CompletedExam  *CompletedExam `gorm:"foreignKey:StudentID,ExamID;references:StudentID,ExamID" json:"completed_exam"`
 }
 
 func (er *ExamResult) Validate() error_utils.ErrorMessage {

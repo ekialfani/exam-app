@@ -10,6 +10,7 @@ import (
 type completedExamDomainRepo interface {
 	CreateCompletedExam(*models.CompletedExam) (*models.CompletedExam, error_utils.ErrorMessage)
 	GetAllCompletedExams(uint) ([]*models.CompletedExam, error_utils.ErrorMessage)
+	GetCompletedExamByExamId(uint) (*models.CompletedExam, error_utils.ErrorMessage)
 }
 
 type completedExamDomain struct {}
@@ -38,6 +39,20 @@ func (ced *completedExamDomain) GetAllCompletedExams(studentId uint) ([]*models.
 	}
 
 	return completedExams, nil
+}
+
+func (ced *completedExamDomain) GetCompletedExamByExamId(examId uint) (*models.CompletedExam, error_utils.ErrorMessage) {
+	db := database.GetDB()
+
+	var completedExam *models.CompletedExam
+
+	err := db.Preload("Exam").Preload("ExamResult").Where("exam_id = ?", examId).First(&completedExam).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	return completedExam, nil
 }
 
 var CompletedExamRepository completedExamDomainRepo = &completedExamDomain{}

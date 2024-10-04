@@ -75,6 +75,7 @@ func StartServer() *gin.Engine {
 		completedExamRouter.Use(middlewares.Authentication())
 		completedExamRouter.POST("/", controllers.CreateCompletedExam)
 		completedExamRouter.GET("/", controllers.GetAllCompletedExams)
+		completedExamRouter.GET("/:examId", controllers.GetCompletedExamByExamId)
 	}
 
 	return router
