@@ -23,30 +23,30 @@ const data = [
   {
     id: 1,
     imgUrl:
-      "https://th.bing.com/th/id/OIP.aCGFQmu_gL_TOAW69qrp1gHaDy?rs=1&pid=ImgDetMain",
-    title: "dasar pemrograman",
-    lecturer: "Otong, M.Kom",
-    answer: "10/20",
-    status: false,
-  },
-  {
-    id: 2,
-    imgUrl:
-      "https://www.investopedia.com/thmb/J33BG-Cf03bW8-O4kXJfuht3gHA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/algorithm-df9b57e8ea7c494b891da25987643fab.jpg",
-    title: "algoritma 2",
-    lecturer: "Ucup, M.T",
-    answer: "20/20",
+      "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+    title: "UAS Mikrokontroller",
+    lecturer: "Indra Gunawan, ST., M.Pd., M.Kom",
+    answer: "5",
     status: true,
   },
-  {
-    id: 3,
-    imgUrl:
-      "https://globalcloudteam.com/wp-content/uploads/2023/04/how-to-hire-a-kotlin-developer-tips-and-tricks-img-2-768x512.jpg",
-    title: "pemrograman mobile",
-    lecturer: "Adit, M.Kom",
-    answer: "10/20",
-    status: false,
-  },
+  // {
+  //   id: 2,
+  //   imgUrl:
+  //     "https://www.investopedia.com/thmb/J33BG-Cf03bW8-O4kXJfuht3gHA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/algorithm-df9b57e8ea7c494b891da25987643fab.jpg",
+  //   title: "algoritma 2",
+  //   lecturer: "Ucup, M.T",
+  //   answer: "20/20",
+  //   status: true,
+  // },
+  // {
+  //   id: 3,
+  //   imgUrl:
+  //     "https://globalcloudteam.com/wp-content/uploads/2023/04/how-to-hire-a-kotlin-developer-tips-and-tricks-img-2-768x512.jpg",
+  //   title: "pemrograman mobile",
+  //   lecturer: "Adit, M.Kom",
+  //   answer: "10/20",
+  //   status: false,
+  // },
 ];
 
 const Home = () => {
@@ -141,7 +141,7 @@ const Home = () => {
         </View>
       </View>
 
-      <View className="mt-24 px-5">
+      <View className="mt-28 px-5">
         <Text className="capitalize font-medium mt-2">riwayat ujian</Text>
         <Text className="text-slate-500 italic"></Text>
         <FlatList

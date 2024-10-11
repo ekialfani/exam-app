@@ -11,7 +11,7 @@ import (
 type examAssignmentDomainRepo interface {
 	CreateExamAssignment(*models.ExamAssignment) (*models.ExamAssignmentResponse, error_utils.ErrorMessage)
 	GetAllExamAssignments(uint) ([]*models.ExamAssignmentResponse, error_utils.ErrorMessage)
-	DeleteExamAssignment(uint) (string, error_utils.ErrorMessage)
+	DeleteExamAssignment(uint, uint) (string, error_utils.ErrorMessage)
 }
 
 type examAssignmentDomain struct {}
@@ -110,12 +110,12 @@ func (ead *examAssignmentDomain) GetAllExamAssignments(studentId uint) ([]*model
 	return examAssignmentsResponse, nil
 }
 
-func (ead *examAssignmentDomain) DeleteExamAssignment(examId uint) (string, error_utils.ErrorMessage) {
+func (ead *examAssignmentDomain) DeleteExamAssignment(examId, studentId uint) (string, error_utils.ErrorMessage) {
 	db := database.GetDB()
 	var message string
 	var examAssignment *models.ExamAssignment
 
-	err := db.Where("exam_id = ?", examId).Delete(&examAssignment).Error
+	err := db.Where("exam_id = ?", examId).Where("student_id = ?", studentId).Delete(&examAssignment).Error
 
 	if err != nil {
 		message = ""

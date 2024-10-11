@@ -160,39 +160,3 @@ func StudentAuthorization() gin.HandlerFunc {
 		context.Next()
 	}
 }
-
-func ExamAssignmentAuthorization() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		db := database.GetDB()
-		var errMessage error_utils.ErrorMessage
-
-		examId, err := strconv.Atoi(context.Param("examId"))
-
-		if err != nil {
-			errMessage = error_utils.BadRequest("Parameter salah")
-			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
-			return
-		}
-
-		var examAssignment *models.ExamAssignment
-
-		err = db.Where("exam_id = ?", examId).First(&examAssignment).Error
-
-		if err != nil {
-			errMessage = error_formats.ParseError(err)
-			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
-			return
-		}
-
-		userData := context.MustGet("userData").(jwt.MapClaims)
-		var studentId = uint(userData["id"].(float64))
-
-		if examAssignment.StudentID != studentId {
-			errMessage = error_utils.Unauthorized("Tidak dapat mengakses data")
-			context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
-			return
-		}
-
-		context.Next()
-	}
-}

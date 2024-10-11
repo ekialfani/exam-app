@@ -30,9 +30,9 @@ const Report = () => {
     }
   }, [auth.token]);
 
-  const handleUserLogout = () => {
-    dispatch(logout());
-  };
+  // const handleUserLogout = () => {
+  //   dispatch(logout());
+  // };
 
   return (
     <ScrollView>
@@ -70,9 +70,9 @@ const Report = () => {
           </View>
         )}
       />
-      <TouchableOpacity onPress={handleUserLogout} className="mt-5 ml-5">
+      {/* <TouchableOpacity onPress={handleUserLogout} className="mt-5 ml-5">
         <Text className="text-red-500">logout</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </ScrollView>
   );
 };

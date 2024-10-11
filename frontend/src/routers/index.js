@@ -23,6 +23,8 @@ import {
   EditUserProfile,
   ExamResult,
   ReportDetail,
+  AdminSetting,
+  AdminProfile,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -212,6 +214,22 @@ const Router = () => {
         component={ReportDetail}
         options={{
           title: "Detail Laporan",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="AdminSetting"
+        component={AdminSetting}
+        options={{
+          title: "Pengaturan",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="AdminProfile"
+        component={AdminProfile}
+        options={{
+          title: "Profil Saya",
           headerTitleAlign: "center",
         }}
       />

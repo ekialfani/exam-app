@@ -29,7 +29,7 @@ const ReportDetail = ({ route }) => {
         <Image
           className="w-full h-44"
           source={{
-            uri: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2023/07/computer-coding.jpg",
+            uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
           }}
         />
         <Text className="capitalize mt-2 font-semibold text-lg">

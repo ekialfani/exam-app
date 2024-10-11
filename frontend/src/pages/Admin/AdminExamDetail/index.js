@@ -96,7 +96,7 @@ const AdminExamDetail = ({ route, navigation }) => {
             <Image
               className="w-full h-36 rounded-md"
               source={{
-                uri: "https://www.esltutoringservices.com/wp-content/uploads/2021/06/students-taking-an-exam.jpg",
+                uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
               }}
             />
             <View className="mt-3">
@@ -165,6 +165,17 @@ const AdminExamDetail = ({ route, navigation }) => {
                   <AntDesign name="edit" size={20} color="#018675" />
                   <Text className="ml-2 font-medium capitalize text-[#018675]">
                     edit
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className=" flex-row px-3 py-1 items-center rounded-md border-2 border-[#dc2626] ml-2"
+                  onPress={() =>
+                    navigation.navigate("EditExam", { examId: examId })
+                  }
+                >
+                  <FontAwesome name="trash" size={20} color="#dc2626" />
+                  <Text className="ml-2 font-medium capitalize text-[#dc2626]">
+                    hapus
                   </Text>
                 </TouchableOpacity>
               </View>

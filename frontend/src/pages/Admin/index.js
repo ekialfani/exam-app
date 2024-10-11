@@ -1,4 +1,6 @@
 import AdminExamDetail from "./AdminExamDetail";
+import AdminProfile from "./AdminProfile";
+import AdminSetting from "./AdminSetting";
 import CreateExam from "./CreateExam";
 import CreateQuestion from "./CreateQuestion";
 import Dashboard from "./Dashboard";
@@ -18,4 +20,6 @@ export {
   EditQuestion,
   AdminExamDetail,
   ReportDetail,
+  AdminSetting,
+  AdminProfile,
 };

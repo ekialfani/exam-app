@@ -8,8 +8,8 @@ import (
 
 type completedServiceRepo interface {
 	CreateCompletedExam(*models.CompletedExam) (*models.CompletedExam, error_utils.ErrorMessage)
-	GetAllCompletedExams(uint) ([]*models.CompletedExam, error_utils.ErrorMessage)
-	GetCompletedExamByExamId(uint) (*models.CompletedExam, error_utils.ErrorMessage)
+	GetAllCompletedExams(uint) ([]*models.CompletedExamResponse, error_utils.ErrorMessage)
+	GetCompletedExamDetail(uint, uint) (*models.CompletedExamDetailResponse, error_utils.ErrorMessage)
 }
 
 type completedExamService struct {}
@@ -28,7 +28,7 @@ func (ces *completedExamService) CreateCompletedExam(completedExamRequest *model
 	return completedExamResponse, nil
 }
 
-func (ces *completedExamService) GetAllCompletedExams(studentId uint) ([]*models.CompletedExam, error_utils.ErrorMessage) {
+func (ces *completedExamService) GetAllCompletedExams(studentId uint) ([]*models.CompletedExamResponse, error_utils.ErrorMessage) {
 	completedExamResponse, err := repository.CompletedExamRepository.GetAllCompletedExams(studentId)
 
 	if err != nil {
@@ -38,14 +38,14 @@ func (ces *completedExamService) GetAllCompletedExams(studentId uint) ([]*models
 	return completedExamResponse, nil
 }
 
-func (ces *completedExamService) GetCompletedExamByExamId(examId uint) (*models.CompletedExam, error_utils.ErrorMessage) {
-	completedExamRespone, err := repository.CompletedExamRepository.GetCompletedExamByExamId(examId)
+func (ces *completedExamService) GetCompletedExamDetail(studentId, examId uint) (*models.CompletedExamDetailResponse, error_utils.ErrorMessage) {
+	completedExamDetailRespone, err := repository.CompletedExamRepository.GetCompletedExamDetail(studentId, examId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return completedExamRespone, nil
+	return completedExamDetailRespone, nil
 }
 
 var CompletedExamService completedServiceRepo = &completedExamService{}

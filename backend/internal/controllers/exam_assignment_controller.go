@@ -60,7 +60,10 @@ func GetAllExamAssignments(context *gin.Context) {
 func DeleteExamAssignment(context *gin.Context) {
 	examId, _ := strconv.Atoi(context.Param("examId"))
 
-	message, err := services.ExamAssignmentService.DeleteExamAssignment(uint(examId))
+	userData := context.MustGet("userData").(jwt.MapClaims)
+	var studentId = userData["id"].(float64)
+
+	message, err := services.ExamAssignmentService.DeleteExamAssignment(uint(examId), uint(studentId))
 
 	if err != nil {
 		context.AbortWithStatusJSON(err.StatusCode(), err)

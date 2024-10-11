@@ -12,6 +12,8 @@ import {
   resetUserAnswerTemp,
 } from "../../../redux/slice/examResultSlice";
 import DecodeJwtToken from "../../../utils/DecodeJwtToken";
+import { createCompletedExam } from "../../../redux/slice/completedExamSlice";
+import { deleteExamAssignment } from "../../../redux/slice/examSlice";
 
 const ExamAttemp = ({ route, navigation }) => {
   // Utility function untuk menghitung rentang waktu
@@ -41,12 +43,15 @@ const ExamAttemp = ({ route, navigation }) => {
   const { exam } = route.params;
   const [answer, setAnswer] = useState("");
   const [index, setIndex] = useState(0);
+  const [isAssignmentCompletedTrigger, setIsAsignmentCompletedTrigger] =
+    useState(false);
+  const [isAssignmentDeleteTrigger, setIsAssignmentDeleteTrigger] =
+    useState(false);
 
   const dispatch = useDispatch();
-  const result = useSelector((state) => state.result);
   const token = useSelector((state) => state.auth.token);
-  const [trigger, setTrigger] = useState(false);
-
+  const result = useSelector((state) => state.result);
+  const completed = useSelector((state) => state.completed);
   // Menginisialisasi start dan end time
   const startTime = new Date(exam?.start_time);
   const endTime = new Date(exam?.end_time);
@@ -128,17 +133,32 @@ const ExamAttemp = ({ route, navigation }) => {
         exam_date: new Date(),
       };
       dispatch(createExamResult({ examResult, token }));
-      setTrigger(true);
+      setIsAsignmentCompletedTrigger(true);
     }
   }, [result.calculationStatus, result.examResult]);
 
   useEffect(() => {
-    if (result.status === "succeeded" && trigger) {
+    if (isAssignmentCompletedTrigger && result.status === "succeeded") {
+      const parsedToken = DecodeJwtToken(token);
+      dispatch(
+        createCompletedExam({
+          examData: { exam_id: exam?.id, student_id: parsedToken?.id },
+          token,
+        })
+      );
+      setIsAsignmentCompletedTrigger(false);
+      setIsAssignmentDeleteTrigger(true);
+    }
+  }, [isAssignmentCompletedTrigger, result.status]);
+
+  useEffect(() => {
+    if (isAssignmentDeleteTrigger && completed.status === "succeeded") {
+      dispatch(deleteExamAssignment({ examId: exam?.id, token }));
       navigation.navigate("ExamResult", { result: result.examResult });
       dispatch(resetUserAnswerTemp());
-      setTrigger(false);
+      setIsAssignmentDeleteTrigger(false);
     }
-  }, [result.status, trigger]);
+  }, [isAssignmentDeleteTrigger, completed.status]);
 
   return (
     <ScrollView>

@@ -54,7 +54,7 @@ func GetAllCompletedExams(context *gin.Context) {
 	context.JSON(http.StatusOK, completedExamsReponse)
 }
 
-func GetCompletedExamByExamId(context *gin.Context) {
+func GetCompletedExamDetail(context *gin.Context) {
 	examId, err := strconv.Atoi(context.Param("examId"))
 
 	if err != nil {
@@ -63,7 +63,11 @@ func GetCompletedExamByExamId(context *gin.Context) {
 		return
 	}
 
-	completedExamResponse, errMessage := services.CompletedExamService.GetCompletedExamByExamId(uint(examId))
+	userData := context.MustGet("userData").(jwt.MapClaims)
+
+	var studentId = uint(userData["id"].(float64))
+
+	completedExamResponse, errMessage := services.CompletedExamService.GetCompletedExamDetail(studentId, uint(examId))
 
 	if errMessage != nil {
 		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)

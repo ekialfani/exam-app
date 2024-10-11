@@ -9,7 +9,7 @@ import (
 type examAssignmentServiceRepo interface {
 	CreateExamAssignment(*models.ExamAssignment, uint) (*models.ExamAssignmentResponse, error_utils.ErrorMessage)
 	GetAllExamAssignments(uint) ([]*models.ExamAssignmentResponse, error_utils.ErrorMessage)
-	DeleteExamAssignment(uint) (string, error_utils.ErrorMessage)
+	DeleteExamAssignment(uint, uint) (string, error_utils.ErrorMessage)
 }
 
 type examAssignmentService struct {}
@@ -40,8 +40,8 @@ func (eas *examAssignmentService) GetAllExamAssignments(studentId uint) ([]*mode
 	return examAssignmentsResponse, nil
 }
 
-func (eas *examAssignmentService) DeleteExamAssignment(examId uint) (string, error_utils.ErrorMessage) {
-	message, err := repository.ExamAssignmentRepository.DeleteExamAssignment(examId)
+func (eas *examAssignmentService) DeleteExamAssignment(examId, studentId uint) (string, error_utils.ErrorMessage) {
+	message, err := repository.ExamAssignmentRepository.DeleteExamAssignment(examId, studentId)
 
 	if err != nil {
 		return "", err

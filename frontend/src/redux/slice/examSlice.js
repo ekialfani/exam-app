@@ -170,6 +170,27 @@ export const getAllExamAssignments = createAsyncThunk(
   }
 );
 
+export const deleteExamAssignment = createAsyncThunk(
+  "exam-assignment/delete",
+  async ({ examId, token }) => {
+    try {
+      const response = await axios.delete(
+        `${CONFIG.apiUrl}:8080/exam-assignments/${examId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   examCreated: null,
@@ -288,6 +309,20 @@ const examSlice = createSlice({
       })
       .addCase(getAllExamAssignments.rejected, (state, action) => {
         state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(deleteExamAssignment.pending, (state) => {
+        state.status = "loading";
+        state.examAssignment = null;
+        state.error = null;
+      })
+      .addCase(deleteExamAssignment.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.examAssignment = action.payload;
+      })
+      .addCase(deleteExamAssignment.rejected, (state, action) => {
+        state.status = "failed";
+        console.log(action.error);
         state.error = action.error;
       });
   },

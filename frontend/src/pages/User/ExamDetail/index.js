@@ -38,7 +38,7 @@ const ExamDetail = ({ route }) => {
         <Image
           className="w-full h-48"
           source={{
-            uri: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2023/07/computer-coding.jpg",
+            uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
           }}
         />
 

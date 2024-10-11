@@ -48,7 +48,7 @@ export const ExamList = () => {
                 <Image
                   className="w-16 h-16"
                   source={{
-                    uri: "https://th.bing.com/th/id/OIP.n4D17OyV7mU1IhjT6tnFgQHaE8?rs=1&pid=ImgDetMain",
+                    uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
                   }}
                 />
                 <View className="ml-3">
