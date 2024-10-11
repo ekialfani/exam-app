@@ -25,6 +25,7 @@ import {
   ReportDetail,
   AdminSetting,
   AdminProfile,
+  CompletedExamDetail,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -230,6 +231,14 @@ const Router = () => {
         component={AdminProfile}
         options={{
           title: "Profil Saya",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="CompletedExamDetail"
+        component={CompletedExamDetail}
+        options={{
+          title: "Detail Ujian Diselesaikan",
           headerTitleAlign: "center",
         }}
       />

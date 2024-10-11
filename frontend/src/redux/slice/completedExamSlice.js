@@ -45,6 +45,27 @@ export const getAllCompletedExams = createAsyncThunk(
   }
 );
 
+export const getCompletedExamDetail = createAsyncThunk(
+  "completed-exam/get-detail",
+  async ({ examId, token }) => {
+    try {
+      const response = await axios.get(
+        `${CONFIG.apiUrl}:8080/completed-exams/${examId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   completedExam: null,
@@ -80,6 +101,19 @@ const completedExamSlice = createSlice({
         state.completedExams = action.payload;
       })
       .addCase(getAllCompletedExams.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(getCompletedExamDetail.pending, (state) => {
+        state.status = "loading";
+        state.completedExam = null;
+        state.error = null;
+      })
+      .addCase(getCompletedExamDetail.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.completedExam = action.payload;
+      })
+      .addCase(getCompletedExamDetail.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });

@@ -10,10 +10,12 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCompletedExams } from "../../../redux/slice/completedExamSlice";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 const CompletedExam = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+
   const token = useSelector((state) => state?.auth?.token);
   const completed = useSelector((state) => state.completed);
   const isFocused = useIsFocused();
@@ -50,7 +52,13 @@ const CompletedExam = () => {
                 <Text className="border border-green-600 w-14 text-[11px] text-center rounded-full capitalize font-semibold text-green-600">
                   {item?.exam?.status && "selesai"}
                 </Text>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("CompletedExamDetail", {
+                      examId: item?.exam_id,
+                    })
+                  }
+                >
                   <Text className="text-xs font-semibold capitalize">
                     lihat hasil
                   </Text>

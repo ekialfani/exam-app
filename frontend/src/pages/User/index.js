@@ -7,6 +7,7 @@ import UserProfile from "./UserProfile";
 import Setting from "./Setting";
 import EditUserProfile from "./EditUserProfile";
 import ExamResult from "./ExamResult";
+import CompletedExamDetail from "./CompletedExamDetail";
 
 export {
   Home,
@@ -18,4 +19,5 @@ export {
   UserProfile,
   EditUserProfile,
   ExamResult,
+  CompletedExamDetail,
 };
