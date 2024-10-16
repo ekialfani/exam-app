@@ -26,6 +26,7 @@ import {
   AdminSetting,
   AdminProfile,
   CompletedExamDetail,
+  ChangePassword,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -241,6 +242,11 @@ const Router = () => {
           title: "Detail Ujian Diselesaikan",
           headerTitleAlign: "center",
         }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePassword}
+        options={{ title: "Kembali" }}
       />
     </Stack.Navigator>
   );

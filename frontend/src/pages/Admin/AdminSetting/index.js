@@ -74,7 +74,10 @@ const AdminSetting = () => {
           <MaterialIcons name="keyboard-arrow-right" size={20} />
         </TouchableOpacity>
 
-        <TouchableOpacity className="py-3 flex-row items-center justify-between border-b border-slate-300">
+        <TouchableOpacity
+          className="py-3 flex-row items-center justify-between border-b border-slate-300"
+          onPress={() => navigation.navigate("ChangePassword")}
+        >
           <View className="flex-row items-center">
             <MaterialCommunityIcons name="shield-key" size={21} />
             <Text className="capitalize ml-2 font-medium">ganti password</Text>

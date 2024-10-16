@@ -11,6 +11,7 @@ type lecturerServiceRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
 	GetLecturerById(uint) (*models.LecturerResponse, error_utils.ErrorMessage)
 	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
+	UpdatePassword(*models.UpdateLecturerPassword, uint) (string, error_utils.ErrorMessage)
 	DeleteLecturer(uint) (string, error_utils.ErrorMessage)
 }
 
@@ -51,7 +52,6 @@ func (ls *lecturerService) UpdateLecturer(updatedLecturer *models.LecturerUpdate
 		return nil, err
 	}
 
-
 	lecturerResponse, err := repository.LecturerRepository.UpdateLecturer(updatedLecturer, lecturerId)
 
 	if err != nil {
@@ -59,6 +59,22 @@ func (ls *lecturerService) UpdateLecturer(updatedLecturer *models.LecturerUpdate
 	}
 
 	return lecturerResponse, nil
+}
+
+func (ls *lecturerService) UpdatePassword(newPassword *models.UpdateLecturerPassword, lecturerId uint) (string, error_utils.ErrorMessage) {
+	if err := newPassword.Validate(); err != nil {
+		return "", err
+	}
+
+	newPassword.Password = bcrypt_utils.HashPassword([]byte(newPassword.Password))
+
+	message, err := repository.LecturerRepository.UpdatePassword(newPassword, lecturerId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return message, nil
 }
 
 func (ls *lecturerService) DeleteLecturer(lecturerId uint) (string, error_utils.ErrorMessage) {

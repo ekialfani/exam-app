@@ -11,6 +11,7 @@ type lecturerDomainRepo interface {
 	Register(*models.Lecturer) (*models.LecturerResponse, error_utils.ErrorMessage)
 	GetLecturerById(uint) (*models.LecturerResponse, error_utils.ErrorMessage)
 	UpdateLecturer(*models.LecturerUpdate, uint) (*models.LecturerResponse, error_utils.ErrorMessage)
+	UpdatePassword(*models.UpdateLecturerPassword, uint) (string, error_utils.ErrorMessage)
 	DeleteLecturer(uint) (string, error_utils.ErrorMessage)
 }
 
@@ -94,6 +95,19 @@ func (ld *lecturerDomain) UpdateLecturer(updatedLecturer *models.LecturerUpdate,
 	}
 
 	return lecturerResponse, nil
+}
+
+func (ld *lecturerDomain) UpdatePassword(newPassword *models.UpdateLecturerPassword, lecturerId uint) (string, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var lecturer *models.Lecturer
+
+	err := db.Model(&lecturer).Where("id = ?", lecturerId).Update("password", newPassword.Password).Error
+
+	if err != nil {
+		return "", error_formats.ParseError(err)
+	}
+
+	return "Password berhasil diperbarui", nil
 }
 
 func (ld *lecturerDomain) DeleteLecturer(lecturerId uint) (string, error_utils.ErrorMessage) {

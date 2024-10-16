@@ -59,3 +59,17 @@ func (lu *LecturerUpdate) Validate() error_utils.ErrorMessage {
 
 	return nil
 }
+
+type UpdateLecturerPassword struct {
+	Password string `gorm:"type:varchar(200);not null" json:"password" form:"password" valid:"required~Password tidak boleh kosong, minstringlength(6)~Password harus lebih dari 6 karakter"`
+}
+
+func (ulp *UpdateLecturerPassword) Validate() error_utils.ErrorMessage {
+	_, err := govalidator.ValidateStruct(ulp)
+
+	if err != nil {
+		return error_utils.BadRequest(err.Error())
+	}
+
+	return nil
+}
