@@ -6,7 +6,7 @@ import { FlatList, Image, ScrollView, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getExamReportByExamId } from "../../../redux/slice/examReportSlice";
 import ParseDateToIndonesianFormat from "../../../utils/Date/ParseDateToIndonesianFormat";
-import { ParseTimeToIndonesianFormat } from "../../../utils";
+import { GetTimeZone, ParseTimeToIndonesianFormat } from "../../../utils";
 import { getQuestionsByExamId } from "../../../redux/slice/questionSlice";
 
 const ReportDetail = ({ route }) => {
@@ -32,15 +32,15 @@ const ReportDetail = ({ route }) => {
             uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
           }}
         />
-        <Text className="capitalize mt-2 font-semibold text-lg">
+        <Text className="mt-2 font-semibold text-lg">
           {report?.examReport?.title}
         </Text>
         <Text className="text-xs text-slate-500">
           {report?.examReport?.description}
         </Text>
 
-        <View className="flex-row justify-between items-center mt-5 mb-3">
-          <View className="flex-row items-center">
+        <View className="flex-row justify-between items-start mt-5 mb-3">
+          <View className="flex-row items-center w-1/2">
             <MaterialIcons name="date-range" size={16} color="#64748b" />
             <Text className="text-slate-500 ml-1">
               {ParseDateToIndonesianFormat(
@@ -57,7 +57,8 @@ const ReportDetail = ({ route }) => {
               -
               {ParseTimeToIndonesianFormat(
                 new Date(report?.examReport?.end_time)
-              )}
+              )}{" "}
+              {GetTimeZone(new Date(report?.examReport?.end_time))}
             </Text>
           </View>
         </View>
@@ -94,11 +95,17 @@ const ReportDetail = ({ route }) => {
                   source={{ uri: "https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/35af6a41332353.57a1ce913e889.jpg" }}
                 /> */}
                 <View className="w-10 h-10 bg-[#018675] rounded-full items-center justify-center">
-                  <Text className="text-white font-bold text-lg">{item?.student?.full_name?.charAt(0)}</Text>
+                  <Text className="text-white font-bold text-lg">
+                    {item?.student?.full_name?.charAt(0)}
+                  </Text>
                 </View>
                 <View className="ml-2">
-                  <Text className="text-[13px] font-semibold">{item?.student?.full_name}</Text>
-                  <Text className="text-xs text-slate-500">{item?.student?.nim}</Text>
+                  <Text className="text-[13px] font-semibold">
+                    {item?.student?.full_name}
+                  </Text>
+                  <Text className="text-xs text-slate-500">
+                    {item?.student?.nim}
+                  </Text>
                 </View>
               </View>
               <Text className="font-bold">{item.grade}</Text>

@@ -6,6 +6,7 @@ import { Image, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getCompletedExamDetail } from "../../../redux/slice/completedExamSlice";
 import {
+  GetTimeZone,
   ParseDateToIndonesianFormat,
   ParseTimeToIndonesianFormat,
 } from "../../../utils";
@@ -56,7 +57,9 @@ const CompletedExamDetail = ({ route }) => {
                 {ParseTimeToIndonesianFormat(
                   new Date(completed?.completedExam?.exam_result?.exam_date)
                 )}{" "}
-                WITA
+                {GetTimeZone(
+                  new Date(completed?.completedExam?.exam_result?.exam_date)
+                )}
               </Text>
             </View>
           </View>
@@ -68,11 +71,9 @@ const CompletedExamDetail = ({ route }) => {
               </Text>
             </View>
             <View className="border border-green-600 rounded-full px-2">
-              {completed?.completedExam?.exam?.status && (
-                <Text className="text-xs ml-1 capitalize font-semibold text-green-600">
-                  selesai
-                </Text>
-              )}
+              <Text className="text-xs ml-1 capitalize font-semibold text-green-600">
+                selesai
+              </Text>
             </View>
           </View>
           <Text className="mt-2 text-lg font-semibold text-[#018675]">

@@ -22,6 +22,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getExamById } from "../../../redux/slice/examSlice";
 import {
+  GetTimeZone,
   ParseDateToIndonesianFormat,
   ParseTimeToIndonesianFormat,
 } from "../../../utils";
@@ -100,9 +101,7 @@ const AdminExamDetail = ({ route, navigation }) => {
               }}
             />
             <View className="mt-3">
-              <Text className="capitalize font-bold text-lg">
-                {exam.exam?.title}
-              </Text>
+              <Text className="font-bold text-lg">{exam.exam?.title}</Text>
               <Text className="font-medium text-slate-600 mb-2">
                 {exam.exam?.lecturer?.full_name}
               </Text>
@@ -111,8 +110,8 @@ const AdminExamDetail = ({ route, navigation }) => {
               </Text>
 
               <View className="mt-3">
-                <View className="flex-row justify-between mb-2">
-                  <View className="flex-row items-center">
+                <View className="flex-row justify-between mb-2 items-start">
+                  <View className="flex-row items-center w-1/2">
                     <MaterialIcons
                       name="date-range"
                       size={16}
@@ -134,7 +133,8 @@ const AdminExamDetail = ({ route, navigation }) => {
                       -
                       {ParseTimeToIndonesianFormat(
                         new Date(exam.exam?.end_time)
-                      )}
+                      )}{" "}
+                      {GetTimeZone(new Date(exam?.exam?.end_time))}
                     </Text>
                   </View>
                 </View>

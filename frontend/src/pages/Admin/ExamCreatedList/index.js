@@ -49,7 +49,7 @@ const ExamCreatedList = () => {
                 />
                 <View className="flex-1">
                   <View>
-                    <Text className="capitalize font-semibold">
+                    <Text className="font-semibold">
                       {item.title}
                     </Text>
                     <Text className="text-xs text-slate-500">

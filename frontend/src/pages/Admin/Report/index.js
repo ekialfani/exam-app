@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllExamReports } from "../../../redux/slice/examReportSlice";
-import { logout } from "../../../redux/slice/authSlice";
 
 const Report = () => {
   const navigation = useNavigation();
@@ -29,10 +28,6 @@ const Report = () => {
       navigation.navigate("Login");
     }
   }, [auth.token]);
-
-  // const handleUserLogout = () => {
-  //   dispatch(logout());
-  // };
 
   return (
     <ScrollView>
@@ -61,7 +56,9 @@ const Report = () => {
               {item?.exam_results?.length || 0}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("ReportDetail", {examId: item?.id})}
+              onPress={() =>
+                navigation.navigate("ReportDetail", { examId: item?.id })
+              }
             >
               <Text className="text-[13px] capitalize font-semibold">
                 lihat detail
@@ -70,9 +67,6 @@ const Report = () => {
           </View>
         )}
       />
-      {/* <TouchableOpacity onPress={handleUserLogout} className="mt-5 ml-5">
-        <Text className="text-red-500">logout</Text>
-      </TouchableOpacity> */}
     </ScrollView>
   );
 };

@@ -46,10 +46,10 @@ const Dashboard = () => {
     <View>
       <View className="px-5 py-6 bg-[#018675] h-[35vh] relative justify-center">
         <TouchableOpacity
-          className="w-11 h-11 bg-white rounded-full items-center justify-center border-2 border-slate-300 absolute right-5 top-12"
+          className="w-11 h-11 bg-white rounded-full items-center justify-center border-2 border-[#93F3E8] absolute right-5 top-12"
           onPress={() => navigation.navigate("AdminSetting")}
         >
-          <Text className="text-2xl font-semibold">
+          <Text className="text-2xl font-bold text-[#018675] uppercase">
             {lecturer?.lecturer?.full_name?.charAt(0)}
           </Text>
         </TouchableOpacity>

@@ -22,31 +22,12 @@ import {
 const data = [
   {
     id: 1,
-    imgUrl:
-      "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+    imgUrl: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
     title: "UAS Mikrokontroller",
     lecturer: "Indra Gunawan, ST., M.Pd., M.Kom",
-    answer: "5",
+    questions: 20,
     status: true,
   },
-  // {
-  //   id: 2,
-  //   imgUrl:
-  //     "https://www.investopedia.com/thmb/J33BG-Cf03bW8-O4kXJfuht3gHA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/algorithm-df9b57e8ea7c494b891da25987643fab.jpg",
-  //   title: "algoritma 2",
-  //   lecturer: "Ucup, M.T",
-  //   answer: "20/20",
-  //   status: true,
-  // },
-  // {
-  //   id: 3,
-  //   imgUrl:
-  //     "https://globalcloudteam.com/wp-content/uploads/2023/04/how-to-hire-a-kotlin-developer-tips-and-tricks-img-2-768x512.jpg",
-  //   title: "pemrograman mobile",
-  //   lecturer: "Adit, M.Kom",
-  //   answer: "10/20",
-  //   status: false,
-  // },
 ];
 
 const Home = () => {
@@ -85,7 +66,7 @@ const Home = () => {
         examId: exam?.examAssignment?.exam_id,
       });
       setIsExamExist(false);
-      setExamToken("")
+      setExamToken("");
     }
   }, [isExamExist, exam.status]);
 
@@ -100,10 +81,10 @@ const Home = () => {
         </Text>
 
         <TouchableOpacity
-          className="bg-white absolute right-5 w-[40px] h-[40px] rounded-full top-8 items-center justify-center border-2 border-[#93F3E8]"
+          className="bg-white absolute right-5 w-[40px] h-[40px] rounded-full top-10 items-center justify-center border-2 border-[#93F3E8]"
           onPress={() => navigation.navigate("Setting")}
         >
-          <Text className="text-xl font-bold text-[#018675] uppercase">
+          <Text className="text-2xl font-bold text-[#018675] uppercase">
             {student?.student?.full_name?.charAt(0)}
           </Text>
         </TouchableOpacity>
@@ -151,12 +132,12 @@ const Home = () => {
             <TouchableOpacity className="bg-white mb-3 flex-row p-3 rounded-md shadow-lg">
               <Image source={{ uri: item.imgUrl }} className="w-20" />
               <View className="ml-3">
-                <Text className="capitalize font-bold">{item.title}</Text>
+                <Text className="font-bold">{item.title}</Text>
                 <Text className="text-xs font-medium mb-1">
                   {item.lecturer}
                 </Text>
                 <Text className="text-xs text-slate-500">
-                  {item.answer} pertanyaan
+                  {item.questions} pertanyaan
                 </Text>
                 {item.status ? (
                   <Text className="w-20 text-center capitalize text-[10px] border border-green-600 rounded-full text-green-600 font-medium mt-2">

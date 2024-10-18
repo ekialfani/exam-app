@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { ParseDateToIndonesianFormat } from "../../../utils/";
+import { GetTimeZone, ParseDateToIndonesianFormat } from "../../../utils/";
 import { ParseTimeToIndonesianFormat } from "../../../utils";
 import { useNavigation } from "@react-navigation/native";
 import ParseExamSchedule from "../../../utils/ParseExamSchedule";
@@ -49,15 +49,15 @@ const EditExam = ({ route }) => {
 
     dispatch(updateExam({ examId, updatedExam, token }));
 
-    setTrigger(true)
+    setTrigger(true);
   };
 
   useEffect(() => {
     if (trigger && exam.status === "succeeded") {
-      navigation.navigate("AdminExamDetail", {examId: examId})
-      setTrigger(false)
+      navigation.navigate("AdminExamDetail", { examId: examId });
+      setTrigger(false);
     }
-  }, [trigger, exam.status])
+  }, [trigger, exam.status]);
 
   const handleResetForm = () => {
     setTitle("");
@@ -141,7 +141,8 @@ const EditExam = ({ route }) => {
                 <View className="w-2 h-0.5 bg-slate-500" />
                 <TouchableOpacity onPress={() => setShowEndTime(true)}>
                   <Text className="text-xs font-medium text-slate-500 text-right">
-                    {ParseTimeToIndonesianFormat(endTime)}
+                    {ParseTimeToIndonesianFormat(endTime)}{" "}
+                    {GetTimeZone(endTime)}
                   </Text>
                   {showEndTime && (
                     <DateTimePicker
@@ -160,14 +161,11 @@ const EditExam = ({ route }) => {
               </View>
             </View>
           </View>
-
-          <Text
-            className={`text-xs text-red-500 mt-2 ${
-              exam?.error ? "opacity-1" : "opacity-0"
-            }`}
-          >
-            {exam?.error?.message}
-          </Text>
+          {exam?.error && (
+            <Text className="text-xs text-red-500 mt-2">
+              {exam?.error?.message}
+            </Text>
+          )}
 
           <View className="flex-row mt-2 justify-between mb-10">
             <TouchableOpacity
@@ -186,9 +184,7 @@ const EditExam = ({ route }) => {
               {exam?.status == "loading" ? (
                 <ActivityIndicator size="small" color="#fff" animating={true} />
               ) : (
-                <Text className="font-medium uppercase text-white">
-                  simpan
-                </Text>
+                <Text className="font-medium uppercase text-white">simpan</Text>
               )}
             </TouchableOpacity>
           </View>

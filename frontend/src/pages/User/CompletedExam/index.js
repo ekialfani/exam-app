@@ -50,7 +50,7 @@ const CompletedExam = () => {
               </Text>
               <View className="mt-2 flex-row items-center justify-between">
                 <Text className="border border-green-600 w-14 text-[11px] text-center rounded-full capitalize font-semibold text-green-600">
-                  {item?.exam?.status && "selesai"}
+                  selesai
                 </Text>
                 <TouchableOpacity
                   onPress={() =>

@@ -12,6 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getAllExamAssignments } from "../../../redux/slice/examSlice";
 import {
+  GetTimeZone,
   ParseDateToIndonesianFormat,
   ParseTimeToIndonesianFormat,
 } from "../../../utils";
@@ -52,9 +53,7 @@ export const ExamList = () => {
                   }}
                 />
                 <View className="ml-3">
-                  <Text className="capitalize font-medium">
-                    {item?.exam?.title}
-                  </Text>
+                  <Text className="font-medium">{item?.exam?.title}</Text>
                   <Text className="text-xs font-medium mb-1">
                     {item?.exam?.lecturer?.full_name}
                   </Text>
@@ -71,7 +70,8 @@ export const ExamList = () => {
                     <Text className="text-xs text-slate-500">
                       {ParseTimeToIndonesianFormat(
                         new Date(item?.exam?.start_time)
-                      )}
+                      )}{" "}
+                      {GetTimeZone(new Date(item?.exam?.start_time))}
                     </Text>
                   </View>
                 </View>

@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { ParseDateToIndonesianFormat } from "../../../utils/Date";
-import { ParseTimeToIndonesianFormat } from "../../../utils";
+import { GetTimeZone, ParseTimeToIndonesianFormat } from "../../../utils";
 import { useNavigation } from "@react-navigation/native";
 import ParseExamSchedule from "../../../utils/ParseExamSchedule";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,7 +110,7 @@ const CreateExam = () => {
   return (
     <ScrollView>
       <View className="items-center">
-        <View className="bg-[#018675] w-5/6 h-32 rounded-md mt-5 items-center justify-center">
+        <View className="bg-[#018675] w-5/6 h-36 rounded-md mt-5 items-center justify-center">
           <TouchableOpacity>
             <Text className="text-white font-medium capitalize">
               pilih gambar
@@ -181,7 +181,8 @@ const CreateExam = () => {
                 <View className="w-2 h-0.5 bg-slate-500" />
                 <TouchableOpacity onPress={() => setShowEndTime(true)}>
                   <Text className="text-xs font-medium text-slate-500 text-right">
-                    {ParseTimeToIndonesianFormat(endTime)}
+                    {ParseTimeToIndonesianFormat(endTime)}{" "}
+                    {GetTimeZone(endTime)}
                   </Text>
                   {showEndTime && (
                     <DateTimePicker

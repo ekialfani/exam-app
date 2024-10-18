@@ -6,6 +6,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { GetExamWithShuffledQuestions } from "../../../redux/slice/examSlice";
 import {
+  GetTimeZone,
   ParseDateToIndonesianFormat,
   ParseTimeToIndonesianFormat,
 } from "../../../utils";
@@ -43,9 +44,7 @@ const ExamDetail = ({ route }) => {
         />
 
         <View>
-          <Text className="capitalize font-bold text-lg mt-1">
-            {exam?.exam?.title}
-          </Text>
+          <Text className="font-bold text-lg mt-1">{exam?.exam?.title}</Text>
           <Text className="font-medium text-slate-800">
             {lecturer?.lecturer?.full_name}
           </Text>
@@ -64,7 +63,8 @@ const ExamDetail = ({ route }) => {
               <MaterialIcons name="schedule" size={16} color="#94A3B8" />
               <Text className="text-slate-500 ml-1 text-xs">
                 {ParseTimeToIndonesianFormat(new Date(exam?.exam?.start_time))}-
-                {ParseTimeToIndonesianFormat(new Date(exam?.exam?.end_time))}
+                {ParseTimeToIndonesianFormat(new Date(exam?.exam?.end_time))}{" "}
+                {GetTimeZone(new Date(exam?.exam?.end_time))}
               </Text>
             </View>
           </View>

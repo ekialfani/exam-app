@@ -33,7 +33,9 @@ const UserProfile = ({ route }) => {
           <View className="mt-10 mb-3">
             <Text className="mb-3 font-medium">Nama Panjang</Text>
             <View className="bg-white px-3 py-3 rounded-md">
-              <Text className="text-slate-500">{student?.student?.full_name}</Text>
+              <Text className="text-slate-500">
+                {student?.student?.full_name}
+              </Text>
             </View>
           </View>
 
@@ -72,7 +74,9 @@ const UserProfile = ({ route }) => {
           <View className="mb-3">
             <Text className="mb-3 font-medium">Semester</Text>
             <View className="bg-white px-3 py-3 rounded-md">
-              <Text className="text-slate-500">{student?.student?.semester}</Text>
+              <Text className="text-slate-500">
+                {student?.student?.semester}
+              </Text>
             </View>
           </View>
 

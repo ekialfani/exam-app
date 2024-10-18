@@ -62,31 +62,17 @@ const AdminProfile = ({ route }) => {
             </View>
           </View>
 
-          {/* <View className="mb-3">
-            <Text className="mb-3 font-medium">Program Studi</Text>
-            <View className="bg-white px-3 py-3 rounded-md">
-              <Text className="text-slate-500">{lecturer?.lecturer?.major}</Text>
-            </View>
-          </View> */}
-
-          {/* <View className="mb-3">
-            <Text className="mb-3 font-medium">Semester</Text>
-            <View className="bg-white px-3 py-3 rounded-md">
-              <Text className="text-slate-500">{lecturer?.lecturer?.semester}</Text>
-            </View>
-          </View> */}
-
-          {/* <View className="mb-3">
-            <Text className="mb-3 font-medium">Kelas</Text>
-            <View className="bg-white px-3 py-3 rounded-md">
-              <Text className="text-slate-500">{lecturer?.lecturer?.class}</Text>
-            </View>
-          </View> */}
-
           <View className="mb-3">
             <Text className="mb-3 font-medium">Email</Text>
             <View className="bg-white px-3 py-3 rounded-md">
               <Text className="text-slate-500">{lecturer?.lecturer?.email}</Text>
+            </View>
+          </View>
+
+          <View className="mb-3">
+            <Text className="mb-3 font-medium">Password</Text>
+            <View className="bg-white px-3 py-3 rounded-md">
+              <Text className="text-slate-500">******</Text>
             </View>
           </View>
 

@@ -47,10 +47,8 @@ const AdminSetting = () => {
               {lecturer?.lecturer?.full_name?.charAt(0)}
             </Text>
           </View>
-          <View className="ml-3">
-            <Text className="font-bold capitalize">
-              {lecturer?.lecturer?.full_name}
-            </Text>
+          <View className="ml-3 w-4/5">
+            <Text className="font-bold">{lecturer?.lecturer?.full_name}</Text>
             <Text className="text-xs text-slate-500">
               {lecturer?.lecturer?.email}
             </Text>
@@ -90,12 +88,12 @@ const AdminSetting = () => {
           onPress={() => setDarkMode(!darkMode)}
         >
           <View className="flex-row items-center">
-            <MaterialIcons name="dark-mode" size={21} />
+            <MaterialIcons name="dark-mode" size={22} />
             <Text className="capitalize ml-2 font-medium">mode gelap</Text>
           </View>
           {darkMode ? (
             <View>
-              <Entypo name="switch" size={20} />
+              <Entypo name="switch" color="#018675" size={20} />
             </View>
           ) : (
             <View className="rotate-180">
