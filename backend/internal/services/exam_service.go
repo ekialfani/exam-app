@@ -10,6 +10,7 @@ import (
 
 type examServiceRepo interface {
 	CreateExam(*models.Exam, uint) (*models.Exam, error_utils.ErrorMessage)
+	UploadBackground(*models.BackgroundImage) (*models.BackgroundImage, error_utils.ErrorMessage)
 	GetAllExamsByLecturerId(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	GetAllExams() ([]*models.Exam, error_utils.ErrorMessage)
 	GetAllExamReports(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
@@ -40,6 +41,16 @@ func (es *examService) CreateExam(examRequest *models.Exam, lecturerID uint) (*m
 	}
 
 	return examResponse, nil
+}
+
+func (es *examService) UploadBackground(background *models.BackgroundImage) (*models.BackgroundImage, error_utils.ErrorMessage) {
+	backgroundResponse, err := repository.ExamRepository.UploadBackground(background)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return backgroundResponse, nil
 }
 
 func (es *examService) GetAllExamsByLecturerId(lecturerID uint) ([]*models.ExamResponse, error_utils.ErrorMessage) {

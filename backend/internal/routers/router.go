@@ -4,11 +4,16 @@ import (
 	"backend/internal/controllers"
 	"backend/internal/middlewares"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func StartServer() *gin.Engine {
 	router := gin.Default()
+
+	router.Use(cors.Default())
+
+	router.Static("/uploads", "../../cmd/server/uploads")
 
 	lecturerRouter := router.Group("/lecturers")
 	{
@@ -29,6 +34,7 @@ func StartServer() *gin.Engine {
 	{
 		examRouter.Use(middlewares.Authentication())
 		examRouter.POST("/", middlewares.AdminAuthorization(), controllers.CreateExam)
+		examRouter.POST("/background-image/:examId", middlewares.AdminAuthorization(), controllers.UploadBackground)
 		examRouter.GET("/", middlewares.AdminAuthorization(), controllers.GetAllExamsByLecturerId)
 		examRouter.GET("/:examId", controllers.GetExamById)
 		examRouter.GET("/token/:examToken", controllers.GetExamByToken)

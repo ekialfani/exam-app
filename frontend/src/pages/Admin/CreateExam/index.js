@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   ScrollView,
   Text,
   TextInput,
@@ -21,9 +22,14 @@ import {
   createQuestionTemp,
   resetQuestionTemp,
 } from "../../../redux/slice/questionSlice";
-import { createExam } from "../../../redux/slice/examSlice";
+import {
+  createExam,
+  uploadBackgroundImage,
+} from "../../../redux/slice/examSlice";
+import * as ImagePicker from "expo-image-picker";
 
 const CreateExam = () => {
+  const [image, setImage] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [showDate, setShowDate] = useState(false);
@@ -33,12 +39,26 @@ const CreateExam = () => {
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [trigger, setTrigger] = useState(false);
+  const [triggerNavigation, setTriggerNavigation] = useState(false);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { questionsTemp } = useSelector((state) => state.question);
   const token = useSelector((state) => state.auth.token);
   const exam = useSelector((state) => state.exam);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const handleCreateExam = () => {
     const examData = {
@@ -86,11 +106,21 @@ const CreateExam = () => {
 
         dispatch(createQuestion({ questionData, token }));
 
-        if (index == questionsTemp.length - 1) {
-          handleResetForm();
-          navigation.navigate("AdminExamDetail", {
-            examId: exam.examCreated.id,
+        if (index == questionsTemp.length - 1 && image) {
+          const formData = new FormData();
+          formData.append("image", {
+            uri: image,
+            type: `image/${image?.split(".")?.pop()}`,
+            name: image?.split("/")?.pop(),
           });
+          dispatch(
+            uploadBackgroundImage({
+              examId: exam?.examCreated?.id,
+              formData,
+              token,
+            })
+          );
+          setTriggerNavigation(true);
         }
       });
 
@@ -98,7 +128,18 @@ const CreateExam = () => {
     }
   }, [trigger, exam.status]);
 
+  useEffect(() => {
+    if (triggerNavigation && exam.status === "succeeded") {
+      handleResetForm();
+      navigation.navigate("AdminExamDetail", {
+        examId: exam?.examCreated?.id,
+      });
+      setTriggerNavigation(false);
+    }
+  }, [triggerNavigation, exam.status]);
+
   const handleResetForm = () => {
+    setImage(null);
     setTitle("");
     setDescription("");
     setStartDate(new Date());
@@ -110,12 +151,16 @@ const CreateExam = () => {
   return (
     <ScrollView>
       <View className="items-center">
-        <View className="bg-[#018675] w-5/6 h-36 rounded-md mt-5 items-center justify-center">
-          <TouchableOpacity>
+        <View className="bg-[#018675] w-5/6 h-36 rounded-md mt-5 items-center justify-center relative overflow-hidden">
+          <TouchableOpacity
+            onPress={pickImage}
+            className="absolute top-0 left-0 right-0 bottom-0 bg-black/50 z-30 items-center justify-center"
+          >
             <Text className="text-white font-medium capitalize">
               pilih gambar
             </Text>
           </TouchableOpacity>
+          {image && <Image source={{ uri: image }} className="w-full h-full" />}
         </View>
 
         <View className="w-5/6 mt-3">

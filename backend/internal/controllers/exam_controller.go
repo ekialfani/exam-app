@@ -6,6 +6,8 @@ import (
 	"backend/internal/utils/error_utils"
 	"backend/internal/utils/header_value_utils"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
@@ -41,6 +43,65 @@ func CreateExam(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, examResponse)
+}
+
+func isValidImageType(contentType string) bool {
+	validTypes := map[string]bool{
+		"image/jpeg": true,
+		"image/png":  true,
+		"image/gif":  true,
+	}
+
+	return validTypes[contentType]
+}
+
+func UploadBackground(context *gin.Context) {
+	var background models.BackgroundImage
+	examId, err := strconv.Atoi(context.Param("examId"))
+
+	if err != nil {
+		errMessage := error_utils.BadRequest("Parameter salah")
+		context.AbortWithStatusJSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	background.ExamID = uint(examId)
+
+	file, err := context.FormFile("image")
+	if err != nil {
+		errMessage := error_utils.BadRequest("Gambar masih kosong")
+		context.JSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	if !isValidImageType(file.Header.Get("Content-Type")) {
+		errMessage := error_utils.BadRequest("Format Gambar Salah")
+		context.JSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	uploadsDir := "uploads"
+	filePath := filepath.Join(uploadsDir, file.Filename)
+
+	if err := os.MkdirAll(uploadsDir, os.ModePerm); err != nil {
+		context.JSON(http.StatusInternalServerError, error_utils.InternalServerError("Gagal membuat direktori uploads"))
+		return
+	}
+
+	if err := context.SaveUploadedFile(file, filePath); err != nil {
+		context.JSON(http.StatusInternalServerError, error_utils.InternalServerError("Gagal menyimpan gambar"))
+		return
+	}
+
+	background.Image = filePath
+
+	backgroundResponse, errMessage := services.ExamService.UploadBackground(&background)
+	if errMessage != nil {
+		context.JSON(errMessage.StatusCode(), errMessage)
+		return
+	}
+
+	context.JSON(http.StatusOK, backgroundResponse)
 }
 
 func GetAllExamsByLecturerId(context *gin.Context) {

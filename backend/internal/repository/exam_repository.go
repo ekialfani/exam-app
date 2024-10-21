@@ -6,10 +6,14 @@ import (
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
 	"fmt"
+	"path/filepath"
 )
+
+const BASE_IMAGE_URL = "http://172.16.20.119:8080/uploads/"
 
 type examDomainRepo interface {
 	CreateExam(*models.Exam) (*models.Exam, error_utils.ErrorMessage)
+	UploadBackground(*models.BackgroundImage) (*models.BackgroundImage, error_utils.ErrorMessage)
 	GetAllExamsByLecturerId(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
 	GetAllExams() ([]*models.Exam, error_utils.ErrorMessage)
 	GetAllExamReports(uint) ([]*models.ExamResponse, error_utils.ErrorMessage)
@@ -34,12 +38,23 @@ func (ed *examDomain) CreateExam(examRequest *models.Exam) (*models.Exam, error_
 	return examRequest, nil
 }
 
+func (ed *examDomain) UploadBackground(background *models.BackgroundImage) (*models.BackgroundImage, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	err := db.Debug().Create(&background).Error
+
+	if err != nil {
+		return nil, error_formats.ParseError(err)
+	}
+
+	return background, nil
+}
+
 func (ed *examDomain) GetAllExamsByLecturerId(lecturerID uint) ([]*models.ExamResponse, error_utils.ErrorMessage) {
 	db := database.GetDB()
 	var exams []*models.Exam
 	var examsResponse []*models.ExamResponse
 
-	err := db.Preload("Lecturer").Where("lecturer_id = ?", lecturerID).Preload("Questions").Find(&exams).Error
+	err := db.Preload("Lecturer").Preload("BackgroundImage").Preload("Questions").Where("lecturer_id = ?", lecturerID).Find(&exams).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -64,6 +79,12 @@ func (ed *examDomain) GetAllExamsByLecturerId(lecturerID uint) ([]*models.ExamRe
 				CreatedAt: exam.Lecturer.CreatedAt,
 				UpdatedAt: exam.Lecturer.UpdatedAt,
 			},
+			BackgroundImage: func() string {
+        if exam.BackgroundImage != nil && exam.BackgroundImage.Image != "" {
+            return BASE_IMAGE_URL + filepath.Base(exam.BackgroundImage.Image)
+        }
+        return ""
+    }(),
 			Title: exam.Title,
 			Description: exam.Description,
 			Status: exam.Status,
@@ -193,7 +214,7 @@ func (ed *examDomain) GetExamById(examId uint) (*models.ExamResponse, error_util
 	db := database.GetDB()
 	var exam *models.Exam
 
-	err := db.Preload("Lecturer").Preload("Questions").First(&exam, examId).Error
+	err := db.Preload("Lecturer").Preload("BackgroundImage").Preload("Questions").First(&exam, examId).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -213,6 +234,12 @@ func (ed *examDomain) GetExamById(examId uint) (*models.ExamResponse, error_util
 			CreatedAt: exam.Lecturer.CreatedAt,
 			UpdatedAt: exam.Lecturer.UpdatedAt,
 		},
+		BackgroundImage: func() string {
+			if exam.BackgroundImage != nil && exam.BackgroundImage.Image != "" {
+					return BASE_IMAGE_URL + filepath.Base(exam.BackgroundImage.Image)
+			}
+			return ""
+	}(),
 		Title: exam.Title,
 		Description: exam.Description,
 		Status: exam.Status,

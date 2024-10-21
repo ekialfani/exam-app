@@ -24,6 +24,28 @@ export const createExam = createAsyncThunk(
   }
 );
 
+export const uploadBackgroundImage = createAsyncThunk(
+  "exam/upload-background-image",
+  async ({ examId, formData, token }) => {
+    try {
+      const response = await axios.post(
+        `${CONFIG.apiUrl}:8080/exams/background-image/${examId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 export const getAllExams = createAsyncThunk(
   "exam/get-all-exams",
   async ({ token }) => {
@@ -199,6 +221,7 @@ const initialState = {
   examAssignment: null,
   examAssignments: null,
   error: null,
+  backgroundImage: null,
 };
 
 const examSlice = createSlice({
@@ -217,6 +240,19 @@ const examSlice = createSlice({
         state.examCreated = action.payload;
       })
       .addCase(createExam.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(uploadBackgroundImage.pending, (state) => {
+        state.status = "loading";
+        state.backgroundImage = null;
+        state.error = null;
+      })
+      .addCase(uploadBackgroundImage.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.backgroundImage = action.payload;
+      })
+      .addCase(uploadBackgroundImage.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       })
@@ -322,7 +358,6 @@ const examSlice = createSlice({
       })
       .addCase(deleteExamAssignment.rejected, (state, action) => {
         state.status = "failed";
-        console.log(action.error);
         state.error = action.error;
       });
   },

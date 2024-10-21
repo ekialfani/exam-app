@@ -95,9 +95,11 @@ const AdminExamDetail = ({ route, navigation }) => {
         <View className="w-5/6 mt-5">
           <View className="border-b border-slate-300 pb-5 mb-10">
             <Image
-              className="w-full h-36 rounded-md"
+              className="w-full h-40 rounded-md"
               source={{
-                uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+                uri: exam?.exam?.background_image
+                  ? exam.exam.background_image
+                  : "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
               }}
             />
             <View className="mt-3">

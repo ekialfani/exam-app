@@ -43,15 +43,15 @@ const ExamCreatedList = () => {
               <View className="flex-row gap-x-3 flex-start">
                 <Image
                   source={{
-                    uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+                    uri: item?.background_image
+                      ? item.background_image
+                      : "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
                   }}
                   className="w-20 h-20"
                 />
                 <View className="flex-1">
                   <View>
-                    <Text className="font-semibold">
-                      {item.title}
-                    </Text>
+                    <Text className="font-semibold">{item.title}</Text>
                     <Text className="text-xs text-slate-500">
                       {item.lecturer.full_name}
                     </Text>

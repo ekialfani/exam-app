@@ -7,10 +7,17 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
+type BackgroundImage struct {
+	GormModel
+	Image string `gorm:"type:varchar(255)" json:"image" form:"image"`
+	ExamID uint `gorm:"primaryKey" json:"exam_id"`
+}
+
 type Exam struct {
 	GormModel
 	LecturerID uint	`json:"lecturer_id"`
 	Lecturer *Lecturer `json:"lecturer"`
+	BackgroundImage *BackgroundImage `json:"background_image"`
 	Title       string `gorm:"type:varchar(200);not null" json:"title" form:"title" valid:"required~Judul ujian tidak boleh kosong"`
 	Description string `gorm:"type:text" json:"description" form:"description"`
 	Status      bool   `gorm:"not null;default:false" json:"status" form:"status"`
@@ -37,6 +44,7 @@ type ExamResponse struct {
 	ID uint `json:"id"`
 	LecturerID uint	`json:"lecturer_id"`
 	Lecturer *LecturerResponse `json:"lecturer"`
+	BackgroundImage string `json:"background_image"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Status      bool   `json:"status"`
