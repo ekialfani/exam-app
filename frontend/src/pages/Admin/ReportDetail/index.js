@@ -29,7 +29,9 @@ const ReportDetail = ({ route }) => {
         <Image
           className="w-full h-44"
           source={{
-            uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+            uri: report?.examReport?.background_image
+              ? report.examReport.background_image
+              : "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
           }}
         />
         <Text className="mt-2 font-semibold text-lg">

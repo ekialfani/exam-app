@@ -120,7 +120,7 @@ func (ed *examDomain) GetAllExamReports(lecturerId uint) ([]*models.ExamResponse
 	var exams []*models.Exam
 	var examReportsResponse []*models.ExamResponse
 
-	err := db.Preload("ExamResults.Student").Where("lecturer_id = ?", lecturerId).Where("status = ?", true).Find(&exams).Error
+	err := db.Preload("ExamResults.Student").Preload("BackgroundImage").Where("lecturer_id = ?", lecturerId).Where("status = ?", true).Find(&exams).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -163,7 +163,7 @@ func (ed *examDomain) GetExamReportByExamId(examId uint) (*models.ExamResponse, 
 	db := database.GetDB()
 	var exam *models.Exam
 
-	err := db.Preload("ExamResults.Student").Where("status = ?", true).First(&exam, examId).Error
+	err := db.Preload("ExamResults.Student").Preload("BackgroundImage").Where("status = ?", true).First(&exam, examId).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -196,6 +196,12 @@ func (ed *examDomain) GetExamReportByExamId(examId uint) (*models.ExamResponse, 
 		examResponse := &models.ExamResponse{
 			ID:          exam.ID,
 			LecturerID: exam.LecturerID,
+			BackgroundImage: func() string {
+				if exam.BackgroundImage != nil && exam.BackgroundImage.Image != "" {
+						return BASE_IMAGE_URL + filepath.Base(exam.BackgroundImage.Image)
+				}
+				return ""
+		}(),
 			Title:       exam.Title,
 			Description: exam.Description,
 			Status:      exam.Status,
