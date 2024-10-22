@@ -18,7 +18,7 @@ func ScheduleExamStatusUpdater(ctx context.Context) {
 		case <-ticker.C:
 			examsResponse, err := ExamService.GetAllExams()
 			if err != nil {
-				log.Printf("Failed to fetch exams: %v", err)
+				log.Printf("Gagal mengambil data ujian: %v", err)
 				continue
 			}
 
@@ -36,7 +36,20 @@ func ScheduleExamStatusUpdater(ctx context.Context) {
 
 					_, err := ExamService.UpdateExam(updatedExam, exam.ID)
 					if err != nil {
-						log.Printf("Failed to update exam ID %d: %v", exam.ID, err)
+						log.Printf("Gagal memperbarui status ujian %d: %v", exam.ID, err)
+					}
+				} else {
+					updatedExam := &models.ExamUpdate{
+						Title:       exam.Title,
+						Description: exam.Description,
+						Status:      false,
+						StartTime:   exam.StartTime,
+						EndTime:     exam.EndTime,
+					}
+
+					_, err := ExamService.UpdateExam(updatedExam, exam.ID)
+					if err != nil {
+						log.Printf("Gagal memperbarui status ujian %d: %v", exam.ID, err)
 					}
 				}
 			}

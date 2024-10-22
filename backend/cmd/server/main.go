@@ -16,15 +16,15 @@ func init() {
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("error loading .env file")
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	defer cancel()
 
 	go services.ScheduleExamStatusUpdater(ctx)
-
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("error loading .env file")
-	}
 
 	serverPort := os.Getenv("SERVERPORT")
 	routers.StartServer().Run(serverPort)
