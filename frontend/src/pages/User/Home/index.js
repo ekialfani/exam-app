@@ -18,17 +18,7 @@ import {
   createExamAssignment,
   getExamByToken,
 } from "../../../redux/slice/examSlice";
-
-const data = [
-  {
-    id: 1,
-    imgUrl: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
-    title: "UAS Mikrokontroller",
-    lecturer: "Indra Gunawan, ST., M.Pd., M.Kom",
-    questions: 20,
-    status: true,
-  },
-];
+import { getAllCompletedExams } from "../../../redux/slice/completedExamSlice";
 
 const Home = () => {
   const [examToken, setExamToken] = useState("");
@@ -38,9 +28,10 @@ const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state) => state?.auth.token);
   const student = useSelector((state) => state.student);
   const exam = useSelector((state) => state.exam);
+  const completed = useSelector((state) => state.completed);
 
   useEffect(() => {
     const parsedToken = DecodeJwtToken(token);
@@ -69,6 +60,10 @@ const Home = () => {
       setExamToken("");
     }
   }, [isExamExist, exam.status]);
+
+  useEffect(() => {
+    dispatch(getAllCompletedExams({ token }));
+  }, [token, dispatch]);
 
   return (
     <ScrollView>
@@ -125,20 +120,34 @@ const Home = () => {
         <Text className="capitalize font-medium mt-2">riwayat ujian</Text>
         <Text className="text-slate-500 italic"></Text>
         <FlatList
-          data={data}
+          data={completed?.completedExams}
           scrollEnabled={false}
           renderItem={({ item }) => (
-            <TouchableOpacity className="bg-white mb-3 flex-row p-3 rounded-md shadow-lg">
-              <Image source={{ uri: item.imgUrl }} className="w-20" />
+            <TouchableOpacity
+              className="bg-white mb-3 flex-row p-3 rounded-md shadow-lg"
+              onPress={() =>
+                navigation.navigate("CompletedExamDetail", {
+                  examId: item?.exam_id,
+                })
+              }
+            >
+              <Image
+                source={{
+                  uri: item?.exam?.background_image
+                    ? item.exam.background_image
+                    : "https://th.bing.com/th/id/OIP.E-9jnKxUTT1rYZOeAZ8unQHaE8?rs=1&pid=ImgDetMain",
+                }}
+                className="w-20"
+              />
               <View className="ml-3">
-                <Text className="font-bold">{item.title}</Text>
+                <Text className="font-bold">{item?.exam?.title}</Text>
                 <Text className="text-xs font-medium mb-1">
-                  {item.lecturer}
+                  {item?.exam?.lecturer?.full_name}
                 </Text>
                 <Text className="text-xs text-slate-500">
-                  {item.questions} pertanyaan
+                  {item?.exam?.questions_length} pertanyaan
                 </Text>
-                {item.status ? (
+                {item?.exam?.status ? (
                   <Text className="w-20 text-center capitalize text-[10px] border border-green-600 rounded-full text-green-600 font-medium mt-2">
                     selesai
                   </Text>
