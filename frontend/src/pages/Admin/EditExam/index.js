@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   Text,
   TextInput,
@@ -70,12 +71,15 @@ const EditExam = ({ route }) => {
   return (
     <ScrollView>
       <View className="items-center">
-        <View className="bg-[#018675] w-5/6 h-32 rounded-md mt-5 items-center justify-center">
-          <TouchableOpacity>
-            <Text className="text-white font-medium capitalize">
-              pilih gambar
-            </Text>
-          </TouchableOpacity>
+        <View className="bg-[#018675] w-5/6 h-40 rounded-md mt-5 items-center justify-center">
+          <Image
+            source={{
+              uri: exam?.exam?.background_image
+                ? exam.exam.background_image
+                : "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+            }}
+            className="w-full h-full"
+          />
         </View>
 
         <View className="w-5/6 mt-3">
