@@ -17,17 +17,17 @@ type Exam struct {
 	GormModel
 	LecturerID uint	`json:"lecturer_id"`
 	Lecturer *Lecturer `json:"lecturer"`
-	BackgroundImage *BackgroundImage `json:"background_image"`
+	BackgroundImage *BackgroundImage `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"background_image"`
 	Title       string `gorm:"type:varchar(200);not null" json:"title" form:"title" valid:"required~Judul ujian tidak boleh kosong"`
 	Description string `gorm:"type:text" json:"description" form:"description"`
 	Status      bool   `gorm:"not null;default:false" json:"status" form:"status"`
 	StartTime   *time.Time `gorm:"not null" json:"start_time" form:"start_time" valid:"required~Waktu mulai ujian tidak boleh kosong"`
 	EndTime *time.Time `gorm:"not null" json:"end_time" form:"end_time" valid:"required~Waktu selesai ujian tidak boleh kosong"`
 	Token string `json:"token" form:"token"`
-	Questions []Question
+	Questions []Question `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	ExamAssignments []ExamAssignment `gorm:"many2many:exam_assignments;"`
-	ExamResults []ExamResult `gorm:"foreignKey:ExamID"`
-	CompletedExams []CompletedExam `gorm:"many2many:completed_exams;" json:"completed_exams"`
+	ExamResults []ExamResult `gorm:"foreignKey:ExamID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	CompletedExams []CompletedExam `gorm:"many2many:completed_exams;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"completed_exams"`
 }
 
 func (e *Exam) Validate() error_utils.ErrorMessage {

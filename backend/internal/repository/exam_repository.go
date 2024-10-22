@@ -5,7 +5,6 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
-	"fmt"
 	"path/filepath"
 )
 
@@ -337,7 +336,7 @@ func (ed *examDomain) DeleteExam(examId uint) (string, error_utils.ErrorMessage)
 		return message, error_formats.ParseError(err)
 	}
 
-	message = fmt.Sprintf("Ujian dengan id %d berhasil dihapus", examId)
+	message = "Ujian berhasil dihapus"
 
 	return message, nil
 }

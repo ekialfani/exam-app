@@ -23,7 +23,7 @@ import {
   View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { getExamById } from "../../../redux/slice/examSlice";
+import { deleteExam, getExamById } from "../../../redux/slice/examSlice";
 import {
   GetTimeZone,
   ParseDateToIndonesianFormat,
@@ -46,6 +46,7 @@ const AdminExamDetail = ({ route, navigation }) => {
   const question = useSelector((state) => state.question);
   const token = useSelector((state) => state.auth.token);
   const [trigger, setTrigger] = useState(false);
+  const [triggerDeleteExam, setTriggerDeleteExam] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [copiedText, setCopiedText] = useState("");
 
@@ -56,20 +57,6 @@ const AdminExamDetail = ({ route, navigation }) => {
     }
   }, [isFocused, examId, token, dispatch, trigger]);
 
-  useEffect(() => {
-    if (trigger && question.status === "succeeded") {
-      ToastAndroid.show(question.message.message, ToastAndroid.LONG);
-      setTrigger(false);
-      return;
-    }
-
-    if (trigger && question.status === "failed") {
-      ToastAndroid.show(question.error.message, ToastAndroid.LONG);
-      setTrigger(false);
-      return;
-    }
-  }, [trigger, question.status, question.message, question.error]);
-
   const toggleAnswerVisibility = (id) => {
     if (visibleAnswers.includes(id)) {
       setVisibleAnswers(visibleAnswers.filter((answerId) => answerId !== id));
@@ -77,6 +64,34 @@ const AdminExamDetail = ({ route, navigation }) => {
       setVisibleAnswers([...visibleAnswers, id]);
     }
   };
+
+  const showDeleteExamAlert = () => {
+    Alert.alert("Hapus Ujian", "Apakah anda yakin ingin menghapus ujian ini?", [
+      { text: "Batal" },
+      {
+        text: "Ya",
+        onPress: () => {
+          dispatch(deleteExam({ examId, token }));
+          setTriggerDeleteExam(true);
+        },
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    if (triggerDeleteExam && exam.status === "succeeded") {
+      ToastAndroid.show(exam?.message?.message, ToastAndroid.LONG);
+      setTriggerDeleteExam(false);
+      navigation.navigate("Dashboard");
+      return;
+    }
+
+    if (triggerDeleteExam && exam.status === "failed") {
+      ToastAndroid.show(exam?.error?.message, ToastAndroid.LONG);
+      setTriggerDeleteExam(false);
+      return;
+    }
+  }, [triggerDeleteExam, exam.status, exam.message, exam.error]);
 
   const showAlert = (questionId) => {
     Alert.alert(
@@ -94,6 +109,20 @@ const AdminExamDetail = ({ route, navigation }) => {
       ]
     );
   };
+
+  useEffect(() => {
+    if (trigger && question.status === "succeeded") {
+      ToastAndroid.show(question?.message?.message, ToastAndroid.LONG);
+      setTrigger(false);
+      return;
+    }
+
+    if (trigger && question?.status === "failed") {
+      ToastAndroid.show(question?.error?.message, ToastAndroid.LONG);
+      setTrigger(false);
+      return;
+    }
+  }, [trigger, question.status, question.message, question.error]);
 
   const copiedToClipboard = async () => {
     await Clipboard.setStringAsync(exam?.exam?.token);
@@ -212,9 +241,7 @@ const AdminExamDetail = ({ route, navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   className=" flex-row px-3 py-1 items-center rounded-md border-2 border-[#dc2626] ml-2"
-                  onPress={() =>
-                    navigation.navigate("EditExam", { examId: examId })
-                  }
+                  onPress={showDeleteExamAlert}
                 >
                   <FontAwesome name="trash" size={20} color="#dc2626" />
                   <Text className="ml-2 font-medium capitalize text-[#dc2626]">

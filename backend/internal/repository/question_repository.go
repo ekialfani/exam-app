@@ -5,7 +5,6 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
-	"fmt"
 )
 
 type questionDomainRepo interface {
@@ -73,7 +72,7 @@ func (qd *questionDomain) DeleteQuestion(questionId uint) (string, error_utils.E
 		return message, nil
 	}
 
-	message = fmt.Sprintf("soal dengan id %d berhasil dihapus", questionId)
+	message = "Soal ujian berhasil dihapus"
 	return message, nil
 }
 
