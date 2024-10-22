@@ -4,20 +4,23 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import DecodeJwtToken from "../../../utils/DecodeJwtToken";
 import { getLecturerById } from "../../../redux/slice/lecturerSlice";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const token = useSelector((state) => state.auth.token);
   const lecturer = useSelector((state) => state.lecturer);
   const exam = useSelector((state) => state.exam);
 
   useEffect(() => {
-    const parsedToken = DecodeJwtToken(token);
-    dispatch(getLecturerById({ lecturerId: parsedToken?.id, token }));
-  }, [dispatch, token]);
+    if (isFocused) {
+      const parsedToken = DecodeJwtToken(token);
+      dispatch(getLecturerById({ lecturerId: parsedToken?.id, token }));
+    }
+  }, [isFocused, dispatch, token]);
 
   const getExamTotal = (exams) => {
     return exams;

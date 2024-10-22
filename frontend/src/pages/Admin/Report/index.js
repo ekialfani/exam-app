@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import {
   FlatList,
@@ -13,6 +13,7 @@ import { getAllExamReports } from "../../../redux/slice/examReportSlice";
 
 const Report = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const dispatch = useDispatch();
 
@@ -20,8 +21,10 @@ const Report = () => {
   const report = useSelector((state) => state.report);
 
   useEffect(() => {
-    dispatch(getAllExamReports({ token: auth?.token }));
-  }, [auth.token, dispatch]);
+    if (isFocused) {
+      dispatch(getAllExamReports({ token: auth?.token }));
+    }
+  }, [isFocused, auth.token, dispatch]);
 
   useEffect(() => {
     if (!auth.token) {
