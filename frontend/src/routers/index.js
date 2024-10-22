@@ -27,6 +27,7 @@ import {
   AdminProfile,
   CompletedExamDetail,
   ChangePassword,
+  DahsboardDetail,
 } from "../pages";
 import { BottomNavigator } from "../components";
 
@@ -242,6 +243,11 @@ const Router = () => {
         name="ChangePassword"
         component={ChangePassword}
         options={{ title: "Kembali" }}
+      />
+      <Stack.Screen
+        name="DashboardDetail"
+        component={DahsboardDetail}
+        options={{ title: "Detail", headerTitleAlign: "center" }}
       />
     </Stack.Navigator>
   );
