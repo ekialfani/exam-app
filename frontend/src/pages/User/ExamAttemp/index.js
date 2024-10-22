@@ -162,6 +162,9 @@ const ExamAttemp = ({ route, navigation }) => {
 
   return (
     <ScrollView>
+      <View className="bg-white h-[90px] justify-end py-4 items-center">
+        <Text className="text-xl capitalize font-bold">Dasar Pemrograman</Text>
+      </View>
       <View className="p-5">
         <View className="flex-row items-center justify-between">
           <Text className="font-medium capitalize text-[#FCA428]">

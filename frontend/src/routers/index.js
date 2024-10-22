@@ -189,12 +189,7 @@ const Router = () => {
       <Stack.Screen
         name="ExamAttemp"
         component={ExamAttemp}
-        options={({ route }) => ({
-          title: route.params.examTitle
-            ? route.params.examTitle
-            : "Ujian Berlangsung",
-          headerTitleAlign: "center",
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="UserProfile"

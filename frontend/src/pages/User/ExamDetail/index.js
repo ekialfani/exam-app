@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
-import { useEffect } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { GetExamWithShuffledQuestions } from "../../../redux/slice/examSlice";
 import {
@@ -12,16 +12,18 @@ import {
 } from "../../../utils";
 import { useNavigation } from "@react-navigation/native";
 import { getLecturerById } from "../../../redux/slice/lecturerSlice";
+import { isAfter, isEqual } from "date-fns";
 
 const ExamDetail = ({ route }) => {
   const { examId } = route.params;
-
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const token = useSelector((state) => state.auth.token);
   const exam = useSelector((state) => state.exam);
   const lecturer = useSelector((state) => state.lecturer);
+
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     dispatch(GetExamWithShuffledQuestions({ examId, token }));
@@ -32,6 +34,63 @@ const ExamDetail = ({ route }) => {
       dispatch(getLecturerById({ lecturerId: exam?.exam?.lecturer_id, token }));
     }
   }, [exam.exam?.lecturer_id, dispatch, token]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const startTime = new Date(exam?.exam?.start_time);
+  const endTime = new Date(exam?.exam?.end_time);
+
+  let status;
+
+  if (isAfter(currentTime, endTime)) {
+    <View className="border border-green-500 px-2 rounded-full">
+      <Text className="text-green-500 text-xs capitalize">selesai</Text>
+    </View>;
+  } else if (
+    isEqual(currentTime, startTime) ||
+    (currentTime >= startTime && currentTime <= endTime)
+  ) {
+    status = (
+      <View className="border border-red-500 px-2 rounded-full">
+        <Text className="text-red-500 text-xs capitalize">
+          sedang berlangsung
+        </Text>
+      </View>
+    );
+  } else {
+    status = (
+      <View className="border border-yellow-500 px-2 rounded-full">
+        <Text className="text-yellow-500 text-xs capitalize">akan datang</Text>
+      </View>
+    );
+  }
+
+  const isStartTime =
+    isEqual(currentTime, startTime) ||
+    (currentTime >= startTime && currentTime <= endTime);
+
+  const showAlert = () => {
+    Alert.alert(
+      "Peringatan!",
+      "Setelah Anda menekan tombol 'Mulai', Anda tidak dapat kembali ke halaman sebelumnya hingga ujian selesai. Apakah Anda yakin ingin melanjutkan?",
+      [
+        { text: "Batal" },
+        {
+          text: "Ya",
+          onPress: () =>
+            navigation.navigate("ExamAttemp", {
+              exam: exam?.exam,
+            }),
+        },
+      ]
+    );
+  };
 
   return (
     <View className="items-center mt-5">
@@ -57,16 +116,15 @@ const ExamDetail = ({ route }) => {
             <View className="flex-row items-center">
               <MaterialIcons name="date-range" size={16} color="#94A3B8" />
               <Text className="text-slate-500 ml-1 text-xs">
-                {ParseDateToIndonesianFormat(new Date(exam?.exam?.start_time))}
+                {ParseDateToIndonesianFormat(startTime)}
               </Text>
             </View>
 
             <View className="flex-row items-center">
               <MaterialIcons name="schedule" size={16} color="#94A3B8" />
               <Text className="text-slate-500 ml-1 text-xs">
-                {ParseTimeToIndonesianFormat(new Date(exam?.exam?.start_time))}-
-                {ParseTimeToIndonesianFormat(new Date(exam?.exam?.end_time))}{" "}
-                {GetTimeZone(new Date(exam?.exam?.end_time))}
+                {ParseTimeToIndonesianFormat(startTime)} -
+                {ParseTimeToIndonesianFormat(endTime)} {GetTimeZone(endTime)}
               </Text>
             </View>
           </View>
@@ -78,19 +136,31 @@ const ExamDetail = ({ route }) => {
                 {exam?.exam?.Questions?.length} pertanyaan
               </Text>
             </View>
+            <View>
+              <Text>{status}</Text>
+            </View>
           </View>
-          <TouchableOpacity
-            className="bg-[#018675] w-20 py-2 rounded-md mt-5"
-            onPress={() =>
-              navigation.navigate("ExamAttemp", {
-                exam: exam?.exam,
-              })
-            }
-          >
-            <Text className="text-center capitalize font-medium text-white">
-              mulai
-            </Text>
-          </TouchableOpacity>
+          {isStartTime ? (
+            <TouchableOpacity
+              className="bg-[#018675] w-20 py-2 rounded-md mt-5"
+              // onPress={() =>
+              //   navigation.navigate("ExamAttemp", {
+              //     exam: exam?.exam,
+              //   })
+              // }
+              onPress={showAlert}
+            >
+              <Text className="text-center capitalize font-medium text-white">
+                mulai
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View className="bg-slate-400 w-20 py-2 rounded-md mt-5">
+              <Text className="text-center capitalize font-medium text-white">
+                Mulai
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
