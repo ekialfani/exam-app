@@ -45,9 +45,32 @@ export const updateStudent = createAsyncThunk(
   }
 );
 
+export const changeStudentPassword = createAsyncThunk(
+  "lecturer/change-password",
+  async ({ studentId, newPassword, token }) => {
+    try {
+      const response = await axios.patch(
+        `${CONFIG.apiUrl}:8080/students/${studentId}`,
+        newPassword,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data.message;
+    } catch (error) {
+      throw error.response.data;
+    }
+  }
+);
+
 const initialState = {
   status: "idle",
   student: null,
+  message: null,
   error: null,
 };
 
@@ -79,6 +102,19 @@ const studentSlice = createSlice({
         state.student = action.payload;
       })
       .addCase(updateStudent.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error;
+      })
+      .addCase(changeStudentPassword.pending, (state) => {
+        state.status = "loading";
+        state.message = null;
+        state.error = null;
+      })
+      .addCase(changeStudentPassword.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.message = action.payload;
+      })
+      .addCase(changeStudentPassword.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error;
       });

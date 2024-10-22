@@ -60,6 +60,7 @@ func StartServer() *gin.Engine {
 		studentRouter.Use(middlewares.Authentication())
 		studentRouter.GET("/:studentId", controllers.GetStudentById)
 		studentRouter.PUT("/:studentId", middlewares.StudentAuthorization(), controllers.UpdateStudent)
+		studentRouter.PATCH("/:studentId", middlewares.StudentAuthorization(), controllers.UpdateStudentPassword)
 		studentRouter.DELETE("/:studentId", middlewares.StudentAuthorization(), controllers.DeleteStudent)
 	}
 

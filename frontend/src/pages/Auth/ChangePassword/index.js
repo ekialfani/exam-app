@@ -12,6 +12,7 @@ import DecodeJwtToken from "../../../utils/DecodeJwtToken";
 import { useDispatch, useSelector } from "react-redux";
 import { changeLecturerPassword } from "../../../redux/slice/lecturerSlice";
 import { useNavigation } from "@react-navigation/native";
+import { changeStudentPassword } from "../../../redux/slice/studentSlice";
 
 const ChangePassword = () => {
   const [password, setPassword] = useState("");
@@ -50,6 +51,15 @@ const ChangePassword = () => {
       setTrigger(true);
       return;
     }
+
+    dispatch(
+      changeStudentPassword({
+        studentId: parsedToken?.id,
+        newPassword: { password },
+        token,
+      })
+    );
+    setTrigger(true);
   };
 
   return (

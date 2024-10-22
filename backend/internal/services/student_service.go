@@ -11,6 +11,7 @@ type studentServiceRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
 	GetStudentById(uint) (*models.StudentResponse, error_utils.ErrorMessage)
 	UpdateStudent(*models.UpdateStudent, uint) (*models.StudentResponse, error_utils.ErrorMessage)
+	UpdatePassword(*models.UpdateStudentPassword, uint) (string, error_utils.ErrorMessage)
 	DeleteStudent(uint) (string, error_utils.ErrorMessage)
 }
 
@@ -56,6 +57,22 @@ func (ss *studentService) UpdateStudent(updatedStudent *models.UpdateStudent, st
 	}
 
 	return studentResponse, nil
+}
+
+func (ss *studentService) UpdatePassword(newPassword *models.UpdateStudentPassword, studentId uint) (string, error_utils.ErrorMessage) {
+	if err := newPassword.Validate(); err != nil {
+		return "", err
+	}
+
+	newPassword.Password = bcrypt_utils.HashPassword([]byte(newPassword.Password))
+
+	message, err := repository.StudentRepository.UpdatePassword(newPassword, studentId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return message, nil
 }
 
 func (ss *studentService) DeleteStudent(studentId uint) (string, error_utils.ErrorMessage) {

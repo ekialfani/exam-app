@@ -87,6 +87,37 @@ func UpdateStudent(context *gin.Context) {
 	context.JSON(http.StatusOK, studentResponse)
 }
 
+func UpdateStudentPassword(context *gin.Context) {
+	lecturerId, _ := strconv.Atoi(context.Param("studentId"))
+	contentType := header_value_utils.GetContentType(context, "Content-Type")
+	var newPassword = models.UpdateStudentPassword{}
+
+	if contentType == "application/json" {
+		if err := context.ShouldBindJSON(&newPassword); err != nil {
+			errMessage := error_utils.UnprocessableEntity(err.Error())
+			context.JSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+	} else {
+		if err := context.ShouldBind(&newPassword); err != nil {
+			errMessage := error_utils.UnprocessableEntity(err.Error())
+			context.JSON(errMessage.StatusCode(), errMessage)
+			return
+		}
+	}
+
+	message, err := services.StudentService.UpdatePassword(&newPassword, uint(lecturerId))
+
+	if err != nil {
+		context.AbortWithStatusJSON(err.StatusCode(), err)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": message,
+	})
+}
+
 func DeleteStudent(context *gin.Context) {
 	studentId, _ := strconv.Atoi(context.Param("studentId"))
 

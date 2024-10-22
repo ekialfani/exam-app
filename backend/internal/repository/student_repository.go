@@ -11,6 +11,7 @@ type studentDomainRepo interface {
 	Register(*models.Student) (*models.StudentResponse, error_utils.ErrorMessage)
 	GetStudentById(uint) (*models.StudentResponse, error_utils.ErrorMessage)
 	UpdateStudent(*models.UpdateStudent, uint) (*models.StudentResponse, error_utils.ErrorMessage)
+	UpdatePassword(*models.UpdateStudentPassword, uint) (string, error_utils.ErrorMessage)
 	DeleteStudent(uint) (string, error_utils.ErrorMessage)
 }
 
@@ -99,6 +100,19 @@ func (sd *studenDomain) UpdateStudent(updatedStudent *models.UpdateStudent, stud
 	}
 
 	return studentResponse, nil
+}
+
+func (sd *studenDomain) UpdatePassword(newPassword *models.UpdateStudentPassword, studentId uint) (string, error_utils.ErrorMessage) {
+	db := database.GetDB()
+	var student *models.Student
+
+	err := db.Model(&student).Where("id = ?", studentId).Update("password", newPassword.Password).Error
+
+	if err != nil {
+		return "", error_formats.ParseError(err)
+	}
+
+	return "Password berhasil diperbarui", nil
 }
 
 func (sd *studenDomain) DeleteStudent(studentId uint) (string, error_utils.ErrorMessage) {
