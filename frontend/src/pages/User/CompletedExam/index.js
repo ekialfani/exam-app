@@ -37,7 +37,9 @@ const CompletedExam = () => {
             <Image
               className="w-20 object-cover h-full"
               source={{
-                uri: "https://th.bing.com/th/id/OIP.E-9jnKxUTT1rYZOeAZ8unQHaE8?rs=1&pid=ImgDetMain",
+                uri: item?.exam?.background_image
+                  ? item.exam.background_image
+                  : "https://th.bing.com/th/id/OIP.E-9jnKxUTT1rYZOeAZ8unQHaE8?rs=1&pid=ImgDetMain",
               }}
             />
             <View className="ml-3 leading-loose flex-1">

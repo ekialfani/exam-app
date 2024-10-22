@@ -49,7 +49,9 @@ export const ExamList = () => {
                 <Image
                   className="w-16 h-16"
                   source={{
-                    uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+                    uri: item?.exam?.background_image
+                      ? item.exam.background_image
+                      : "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
                   }}
                 />
                 <View className="ml-3">

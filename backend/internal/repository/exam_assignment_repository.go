@@ -6,6 +6,7 @@ import (
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
 	"fmt"
+	"path/filepath"
 )
 
 type examAssignmentDomainRepo interface {
@@ -64,7 +65,7 @@ func (ead *examAssignmentDomain) GetAllExamAssignments(studentId uint) ([]*model
 	var examAssignments []*models.ExamAssignment
 	var examAssignmentsResponse []*models.ExamAssignmentResponse
 
-	err := db.Preload("Exam.Lecturer").Preload("Exam.Questions").Where("student_id = ?", studentId).Find(&examAssignments).Error
+	err := db.Preload("Exam.Lecturer").Preload("Exam.BackgroundImage").Preload("Exam.Questions").Where("student_id = ?", studentId).Find(&examAssignments).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -92,6 +93,12 @@ func (ead *examAssignmentDomain) GetAllExamAssignments(studentId uint) ([]*model
 					CreatedAt: examAssignment.Exam.Lecturer.CreatedAt,
 					UpdatedAt: examAssignment.Exam.Lecturer.UpdatedAt,
 				},
+				BackgroundImage: func() string {
+					if examAssignment.Exam.BackgroundImage != nil && examAssignment.Exam.BackgroundImage.Image != "" {
+							return BASE_IMAGE_URL + filepath.Base(examAssignment.Exam.BackgroundImage.Image)
+					}
+					return ""
+			}(),
 				Title: examAssignment.Exam.Title,
 				Description: examAssignment.Exam.Description,
 				Status: examAssignment.Exam.Status,

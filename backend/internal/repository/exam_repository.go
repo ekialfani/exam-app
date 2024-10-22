@@ -19,7 +19,7 @@ type examDomainRepo interface {
 	GetExamReportByExamId(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
-	GetExamWithShuffledQuestions(uint) (*models.Exam, error_utils.ErrorMessage)
+	GetExamWithShuffledQuestions(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
@@ -272,17 +272,48 @@ func (ed *examDomain) GetExamByToken(examToken string) (*models.Exam, error_util
 	return exam, nil
 }
 
-func (ed *examDomain) GetExamWithShuffledQuestions(examId uint) (*models.Exam, error_utils.ErrorMessage) {
+func (ed *examDomain) GetExamWithShuffledQuestions(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
 	db := database.GetDB()
 	var exam *models.Exam
 
-	err := db.Preload("Questions").First(&exam, examId).Error
+	err := db.Preload("Lecturer").Preload("BackgroundImage").Preload("Questions").First(&exam, examId).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
 	}
 
-	return exam, nil
+	var examResponse = &models.ExamResponse{
+		ID: exam.ID,
+		LecturerID: exam.LecturerID,
+		Lecturer: &models.LecturerResponse{
+			ID: exam.Lecturer.ID,
+			FullName: exam.Lecturer.FullName,
+			Nip: exam.Lecturer.Nip,
+			DateOfBirth: exam.Lecturer.DateOfBirth,
+			Gender: exam.Lecturer.Gender,
+			Email: exam.Lecturer.Email,
+			Role: exam.Lecturer.Role,
+			CreatedAt: exam.Lecturer.CreatedAt,
+			UpdatedAt: exam.Lecturer.UpdatedAt,
+		},
+		BackgroundImage: func() string {
+			if exam.BackgroundImage != nil && exam.BackgroundImage.Image != "" {
+					return BASE_IMAGE_URL + filepath.Base(exam.BackgroundImage.Image)
+			}
+			return ""
+	}(),
+		Title: exam.Title,
+		Description: exam.Description,
+		Status: exam.Status,
+		StartTime: exam.StartTime,
+		EndTime: exam.EndTime,
+		Token: exam.Token,
+		CreatedAt: exam.CreatedAt,
+		UpdatedAt: exam.UpdatedAt,
+		Questions: exam.Questions,
+	}
+
+	return examResponse, nil
 }
 
 func (ed *examDomain) UpdateExam(updatedExam *models.ExamUpdate, examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {

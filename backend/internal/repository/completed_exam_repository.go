@@ -5,6 +5,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/utils/error_formats"
 	"backend/internal/utils/error_utils"
+	"path/filepath"
 )
 
 type completedExamDomainRepo interface {
@@ -34,7 +35,7 @@ func (ced *completedExamDomain) GetAllCompletedExams(studentId uint) ([]*models.
 
 	var completedExamsResponse []*models.CompletedExamResponse
 
-	err := db.Preload("Exam").Preload("Exam.Lecturer").Preload("Exam.Questions").Where("student_id = ?", studentId).Find(&completedExams).Error
+	err := db.Preload("Exam").Preload("Exam.BackgroundImage").Preload("Exam.Lecturer").Preload("Exam.Questions").Where("student_id = ?", studentId).Find(&completedExams).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -51,6 +52,12 @@ func (ced *completedExamDomain) GetAllCompletedExams(studentId uint) ([]*models.
 					ID: completedExam.Exam.LecturerID,
 					FullName: completedExam.Exam.Lecturer.FullName,
 				},
+				BackgroundImage: func() string {
+					if completedExam.Exam.BackgroundImage != nil && completedExam.Exam.BackgroundImage.Image != "" {
+							return BASE_IMAGE_URL + filepath.Base(completedExam.Exam.BackgroundImage.Image)
+					}
+					return ""
+			}(),
 				Title: completedExam.Exam.Title,
 				Description: completedExam.Exam.Description,
 				Status: completedExam.Exam.Status,
@@ -75,7 +82,7 @@ func (ced *completedExamDomain) GetCompletedExamDetail(studentId, examId uint) (
 	var completedExam *models.CompletedExam
 	var examResult *models.ExamResult
 
-	err := db.Preload("Exam").Preload("Exam.Lecturer").Preload("Exam.Questions").Where("exam_id = ?", examId).First(&completedExam).Error
+	err := db.Preload("Exam").Preload("Exam.BackgroundImage").Preload("Exam.Lecturer").Preload("Exam.Questions").Where("exam_id = ?", examId).First(&completedExam).Error
 
 	if err != nil {
 		return nil, error_formats.ParseError(err)
@@ -97,6 +104,12 @@ func (ced *completedExamDomain) GetCompletedExamDetail(studentId, examId uint) (
 				ID: completedExam.Exam.LecturerID,
 				FullName: completedExam.Exam.Lecturer.FullName,
 			},
+			BackgroundImage: func() string {
+				if completedExam.Exam.BackgroundImage != nil && completedExam.Exam.BackgroundImage.Image != "" {
+						return BASE_IMAGE_URL + filepath.Base(completedExam.Exam.BackgroundImage.Image)
+				}
+				return ""
+		}(),
 			Title: completedExam.Exam.Title,
 			Description: completedExam.Exam.Description,
 			Status: completedExam.Exam.Status,

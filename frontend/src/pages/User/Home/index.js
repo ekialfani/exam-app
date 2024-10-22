@@ -97,8 +97,9 @@ const Home = () => {
           <View className="flex-row mt-5 items-center gap-x-2">
             <TextInput
               className="bg-[#F2F2F2] flex-1 px-3 py-1.5 rounded-md focus:border-2 focus:border-[#018675]"
-              placeholder="cth:c67Da"
               value={examToken}
+              editable={true}
+              placeholder="masukkan token ujian"
               onChangeText={(text) => setExamToken(text)}
             />
             <TouchableOpacity
@@ -112,13 +113,11 @@ const Home = () => {
               )}
             </TouchableOpacity>
           </View>
-          <Text
-            className={`text-xs text-red-500 mt-2 ${
-              exam?.error ? "opacity-1" : "opacity-0"
-            }`}
-          >
-            Error: {exam?.error?.message}
-          </Text>
+          {exam?.error && (
+            <Text className="text-xs text-red-500 mt-2">
+              Error: {exam?.error?.message}
+            </Text>
+          )}
         </View>
       </View>
 

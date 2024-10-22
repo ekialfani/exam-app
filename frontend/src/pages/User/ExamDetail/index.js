@@ -39,7 +39,9 @@ const ExamDetail = ({ route }) => {
         <Image
           className="w-full h-48"
           source={{
-            uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+            uri: exam?.exam?.background_image
+              ? exam.exam.background_image
+              : "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
           }}
         />
 

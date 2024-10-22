@@ -28,7 +28,9 @@ const CompletedExamDetail = ({ route }) => {
       <View className="px-5 bg-white py-5 rounded-md shadow-md">
         <Image
           source={{
-            uri: "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
+            uri: completed?.completedExam?.exam?.background_image
+              ? completed?.completedExam?.exam?.background_image
+              : "https://www.thebluediamondgallery.com/wooden-tile/images/exam.jpg",
           }}
           className="w-full h-40"
         />

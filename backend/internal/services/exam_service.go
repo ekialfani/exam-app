@@ -17,7 +17,7 @@ type examServiceRepo interface {
 	GetExamReportByExamId(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamById(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	GetExamByToken(string) (*models.Exam, error_utils.ErrorMessage)
-	GetExamWithShuffledQuestions(uint) (*models.Exam, error_utils.ErrorMessage)
+	GetExamWithShuffledQuestions(uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	UpdateExam(*models.ExamUpdate, uint) (*models.ExamResponse, error_utils.ErrorMessage)
 	DeleteExam(uint) (string, error_utils.ErrorMessage)
 }
@@ -113,7 +113,7 @@ func (es *examService) GetExamByToken(examToken string) (*models.Exam, error_uti
 	return examResponse, nil
 }
 
-func (es *examService) GetExamWithShuffledQuestions(examId uint) (*models.Exam, error_utils.ErrorMessage) {
+func (es *examService) GetExamWithShuffledQuestions(examId uint) (*models.ExamResponse, error_utils.ErrorMessage) {
 	examResponse, err := repository.ExamRepository.GetExamWithShuffledQuestions(examId)
 
 	if err != nil {
