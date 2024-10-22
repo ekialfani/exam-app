@@ -3,7 +3,9 @@
 import {
   AntDesign,
   Entypo,
+  Feather,
   FontAwesome,
+  FontAwesome5,
   MaterialCommunityIcons,
   MaterialIcons,
   Octicons,
@@ -13,6 +15,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Linking,
   ScrollView,
   Text,
   ToastAndroid,
@@ -31,6 +34,7 @@ import {
   getQuestionsByExamId,
 } from "../../../redux/slice/questionSlice";
 import { useIsFocused } from "@react-navigation/native";
+import * as Clipboard from "expo-clipboard";
 
 const AdminExamDetail = ({ route, navigation }) => {
   const { examId } = route.params;
@@ -42,6 +46,8 @@ const AdminExamDetail = ({ route, navigation }) => {
   const question = useSelector((state) => state.question);
   const token = useSelector((state) => state.auth.token);
   const [trigger, setTrigger] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [copiedText, setCopiedText] = useState("");
 
   useEffect(() => {
     if (isFocused || trigger) {
@@ -87,6 +93,38 @@ const AdminExamDetail = ({ route, navigation }) => {
         },
       ]
     );
+  };
+
+  const copiedToClipboard = async () => {
+    await Clipboard.setStringAsync(exam?.exam?.token);
+    const text = await Clipboard.getStringAsync();
+    setCopiedText(text);
+  };
+
+  const shareViaWhatsApp = () => {
+    const url = `whatsapp://send?text=${encodeURIComponent(exam?.exam?.token)}`;
+    Linking.openURL(url)
+      .then(() => console.log("membuka whatsapp"))
+      .catch(() => console.log("gagal membuka whatsapp"));
+  };
+
+  const shareViaTelegram = () => {
+    const url = `tg://msg?text=${encodeURIComponent(exam?.exam?.token)}`;
+    Linking.openURL(url)
+      .then(() => console.log("membuka telegram"))
+      .catch(() => console.log("gagal membuka telegram"));
+  };
+
+  const shareViaEmail = () => {
+    const email = "example@gmail.com";
+    const subject = "subject here";
+    const body = exam?.exam?.token;
+    const url = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+    Linking.openURL(url)
+      .then(() => console.log("membuka gmail"))
+      .catch(() => console.log("gagal membuka gmail"));
   };
 
   return (
@@ -152,7 +190,10 @@ const AdminExamDetail = ({ route, navigation }) => {
               </View>
 
               <View className="flex-row mt-5">
-                <TouchableOpacity className="bg-[#018675] flex-row px-3 py-2 mr-5 items-center rounded-md">
+                <TouchableOpacity
+                  className="bg-[#018675] flex-row px-3 py-2 mr-5 items-center rounded-md"
+                  onPress={() => setShowModal(true)}
+                >
                   <MaterialIcons name="share" size={20} color="#fff" />
                   <Text className="text-white capitalize font-medium ml-2">
                     sebarkan
@@ -331,6 +372,72 @@ const AdminExamDetail = ({ route, navigation }) => {
           </View>
         </View>
       </View>
+      {showModal && (
+        <View className="absolute top-0 w-screen h-screen bg-black/50 z-100 items-center justify-center">
+          <View className="bg-white px-5 py-6 w-5/6 rounded-md">
+            <Text className="mb-3">Bagikan token ujian</Text>
+            <View className="flex-row items-center justify-between gap-x-3">
+              <View className="border border-slate-300 px-3 py-2 bg-slate-100 flex-1">
+                <Text className="text-slate-500">{exam?.exam?.token}</Text>
+              </View>
+              <TouchableOpacity
+                className="items-center w-10"
+                onPress={copiedToClipboard}
+              >
+                {copiedText ? (
+                  <>
+                    <Feather name="check" size={20} color="#16a34a" />
+                    <Text className="text-slate-500 text-xs">copied</Text>
+                  </>
+                ) : (
+                  <>
+                    <MaterialIcons
+                      name="content-copy"
+                      size={20}
+                      color="#64748b"
+                    />
+                    <Text className="text-slate-500 text-xs">copy</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+            <Text className="text-xs mt-2">Atau bagikan via</Text>
+            <View className="flex-row items-center mt-2 gap-x-2">
+              <TouchableOpacity
+                className="w-8 h-8 border border-green-700 rounded-full items-center justify-center"
+                onPress={shareViaWhatsApp}
+              >
+                <FontAwesome5 name="whatsapp" size={16} color="green" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="w-8 h-8 border border-cyan-600 rounded-full items-center justify-center"
+                onPress={shareViaTelegram}
+              >
+                <FontAwesome5 name="telegram-plane" size={16} color="#0891b2" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="w-8 h-8 border border-red-500 rounded-full items-center justify-center"
+                onPress={shareViaEmail}
+              >
+                <MaterialCommunityIcons
+                  name="email-outline"
+                  size={16}
+                  color="#ef4444"
+                />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              className="absolute top-2 right-2"
+              onPress={() => {
+                setShowModal(false);
+                setCopiedText("");
+              }}
+            >
+              <MaterialIcons name="close" size={16} color="#64748b" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };
