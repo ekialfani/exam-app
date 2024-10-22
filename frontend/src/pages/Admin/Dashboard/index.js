@@ -95,7 +95,7 @@ const Dashboard = () => {
         <View className="flex-row justify-evenly">
           <View className="w-2/5 bg-white shadow-md px-3 py-5 rounded-md">
             <Text className="text-2xl font-semibold">
-              {getTotalUncompletedExams(exam?.exams).length || 0}
+              {getTotalUncompletedExams(exam?.exams)?.length || 0}
             </Text>
             <Text className="capitalize font-semibold">belum selesai</Text>
             <TouchableOpacity
@@ -110,7 +110,7 @@ const Dashboard = () => {
           </View>
           <View className="w-2/5 bg-white shadow-md px-3 py-5 rounded-md">
             <Text className="text-2xl font-semibold">
-              {getTotalCompletedExams(exam?.exams).length || 0}
+              {getTotalCompletedExams(exam?.exams)?.length || 0}
             </Text>
             <Text className="capitalize font-semibold">selesai</Text>
             <TouchableOpacity
